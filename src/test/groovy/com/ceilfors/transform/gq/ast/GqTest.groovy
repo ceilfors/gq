@@ -52,6 +52,22 @@ class GqTest extends BaseSpecification {
         GqUtils.gqFile.readLines().last().contains("-> 5")
     }
 
+    def "Should write nested method call with indentation"() {
+        setup:
+        def example = newExample(GqExample)
+
+        when:
+        def result = example.nested1()
+
+        then:
+        result == 15
+        GqUtils.gqFile.text ==
+                """nested1()
+                  |  nested3()
+                  |  -> 5
+                  |-> 15
+                  |""".stripMargin()
+    }
 
     // --- Technical debt
     // Groovy doc recommends CompileStatic for GqTransformation to make compilation quicker

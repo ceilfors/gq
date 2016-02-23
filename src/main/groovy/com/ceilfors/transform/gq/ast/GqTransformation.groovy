@@ -30,7 +30,9 @@ public class GqTransformation extends AbstractASTTransformation {
 
             BlockStatement newCode = new BlockStatement([
                     printMethodHeaderS(methodNode),
+                    fireStartMethodS(),
                     callClosureAndKeepResultS(wrappedOriginalCode, result),
+                    fireEndMethodS()
             ], new VariableScope())
 
             if (methodNode.returnType != ClassHelper.make(void)) {
@@ -117,6 +119,26 @@ public class GqTransformation extends AbstractASTTransformation {
                         }
 
                     }
+                }
+            }
+        }[0] as Statement
+    }
+
+    private Statement fireStartMethodS() {
+        new AstBuilder().buildFromSpec {
+            expression {
+                staticMethodCall(GqUtils, "startMethod") {
+                    argumentList {}
+                }
+            }
+        }[0] as Statement
+    }
+
+    private Statement fireEndMethodS() {
+        new AstBuilder().buildFromSpec {
+            expression {
+                staticMethodCall(GqUtils, "endMethod") {
+                    argumentList {}
                 }
             }
         }[0] as Statement

@@ -18,4 +18,18 @@ class GqExample {
     @Gq
     void "return void"() {
     }
+
+    @Gq
+    int nested1() {
+        return nested2() + 5
+    }
+
+    int nested2() {
+        return nested3() + 5
+    }
+
+    @Gq
+    int nested3() {
+        return 5
+    }
 }
