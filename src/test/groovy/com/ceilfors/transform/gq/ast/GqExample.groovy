@@ -14,4 +14,8 @@ class GqExample {
     int add(int x, int y) {
         return x + y
     }
+
+    @Gq
+    void "return void"() {
+    }
 }

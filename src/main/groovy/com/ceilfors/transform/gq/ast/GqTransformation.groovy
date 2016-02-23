@@ -31,9 +31,11 @@ public class GqTransformation extends AbstractASTTransformation {
             BlockStatement newCode = new BlockStatement([
                     printMethodHeaderS(methodNode),
                     callClosureAndKeepResultS(wrappedOriginalCode, result),
-                    printVariableS(result),
-                    returnS(result)
             ], new VariableScope())
+
+            if (methodNode.returnType != ClassHelper.make(void)) {
+                newCode.statements.addAll([printVariableS(result), returnS(result)])
+            }
 
             methodNode.code = newCode
         } else {

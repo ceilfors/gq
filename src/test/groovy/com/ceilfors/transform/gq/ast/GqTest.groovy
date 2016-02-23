@@ -51,6 +51,18 @@ class GqTest extends Specification {
         GqUtils.gqFile.readLines().first().contains("add(3, 3)")
     }
 
+    def "Should be able to write a method when its return type is void"() {
+        setup:
+        def example = newExample(GqExample)
+
+        when:
+        example."return void"()
+
+        then:
+        GqUtils.gqFile.text == ("return void()\n")
+    }
+
+
     def "Should write the returned value of a method call"() {
         setup:
         def example = newExample(GqExample)
@@ -76,7 +88,7 @@ class GqTest extends Specification {
     }
 
 
-    // --- Kludge
+    // --- Technical debt
     // Groovy doc recommends CompileStatic for GqTransformation to make compilation quicker
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
@@ -85,7 +97,7 @@ class GqTest extends Specification {
     // gString verbatimText is not implemented. This affects decompilation but not runtime. e.g. ${methodNode.name}(parameters) instead of ${method.name)($1, $2, $3)
 
     // --- Feature
-    // @Gq introduces result variable which is a pretty common variable name. Make it unique? Potentially we don't have this problem as we are controlling the closure variable scope
-    // q.d
     // @Gq indentation for nested annotated method call
+    // @Gq(vars=true) to print all variable expression
+    // q.d
 }
