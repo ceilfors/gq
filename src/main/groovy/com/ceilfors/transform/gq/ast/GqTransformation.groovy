@@ -1,7 +1,11 @@
 package com.ceilfors.transform.gq.ast
 
 import com.ceilfors.transform.gq.GqUtils
-import org.codehaus.groovy.ast.*
+import org.codehaus.groovy.ast.ASTNode
+import org.codehaus.groovy.ast.AnnotatedNode
+import org.codehaus.groovy.ast.MethodNode
+import org.codehaus.groovy.ast.Parameter
+import org.codehaus.groovy.ast.VariableScope
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.ClosureExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
@@ -14,6 +18,8 @@ import org.codehaus.groovy.transform.GroovyASTTransformation
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class GqTransformation extends AbstractASTTransformation {
 
+    public static final String RESULT = "result"
+
     public void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
         init(astNodes, sourceUnit)
 
@@ -25,8 +31,7 @@ public class GqTransformation extends AbstractASTTransformation {
         }
     }
 
-    private void transformMethodNode(MethodNode methodNode) {
-        def astBuilder = new AstBuilder()
+    private ClosureExpression wrapInClosure(MethodNode methodNode) {
         BlockStatement originalCode = methodNode.code as BlockStatement
 
         final def closureVariableScope = new VariableScope(originalCode.variableScope)
@@ -35,6 +40,15 @@ public class GqTransformation extends AbstractASTTransformation {
             closureVariableScope.putReferencedLocalVariable(parameter)
             parameter.setClosureSharedVariable(true) // KLUDGE: Should we use: new VariableScopeVisitor(sourceUnit, true).visitMethod(methodNode)
         }
+
+        def closure = new ClosureExpression(Parameter.EMPTY_ARRAY, originalCode)
+        closure.variableScope = closureVariableScope
+
+        return closure
+    }
+
+    private void transformMethodNode(MethodNode methodNode) {
+        def astBuilder = new AstBuilder()
 
         List<ASTNode> nodes = astBuilder.buildFromSpec {
             block {
@@ -65,15 +79,7 @@ public class GqTransformation extends AbstractASTTransformation {
                         variable "result"
                         token "="
                         methodCall {
-                            closure {
-                                parameters {}
-                                block {
-                                    expression.addAll(originalCode.statements)
-                                }
-
-                            }
-
-                            (expression.last() as ClosureExpression).setVariableScope(closureVariableScope)
+                            expression.add(wrapInClosure(methodNode))
                             constant "call"
                             argumentList {}
                         }
@@ -86,13 +92,13 @@ public class GqTransformation extends AbstractASTTransformation {
                             binary {
                                 constant "-> "
                                 token "+"
-                                variable "result"
+                                variable RESULT
                             }
 
                         }
                     }
                 }
-                returnStatement { variable "result" }
+                returnStatement { variable RESULT }
             }
         }
         methodNode.code = nodes[0] as Statement

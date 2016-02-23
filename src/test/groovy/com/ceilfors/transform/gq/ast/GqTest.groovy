@@ -85,7 +85,7 @@ class GqTest extends Specification {
     // gString verbatimText is not implemented. This affects decompilation but not runtime. e.g. ${methodNode.name}(parameters) instead of ${method.name)($1, $2, $3)
 
     // --- Feature
-    // Support resolving method argument value
     // @Gq introduces result variable which is a pretty common variable name. Make it unique? Potentially we don't have this problem as we are controlling the closure variable scope
-
+    // q.d
+    // @Gq indentation for nested annotated method call
 }
