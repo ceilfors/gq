@@ -1,7 +1,5 @@
 package com.ceilfors.transform.gq.ast
 
-import com.ceilfors.transform.gq.GqUtils
-
 class GqTest extends BaseSpecification {
 
     def "Should write the name of a method with empty parameter"() {
@@ -13,7 +11,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 5
-        GqUtils.gqFile.readLines().first().contains("return 5()")
+        gqFile.file.readLines().first().contains("return 5()")
     }
 
     def "Should write the arguments of a method call"() {
@@ -25,7 +23,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 6
-        GqUtils.gqFile.readLines().first().contains("add(3, 3)")
+        gqFile.file.readLines().first().contains("add(3, 3)")
     }
 
     def "Should be able to write a method when its return type is void"() {
@@ -36,7 +34,7 @@ class GqTest extends BaseSpecification {
         example."return void"()
 
         then:
-        GqUtils.gqFile.text == ("return void()\n")
+        gqFile.file.text == ("return void()\n")
     }
 
 
@@ -49,7 +47,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 5
-        GqUtils.gqFile.readLines().last().contains("-> 5")
+        gqFile.file.readLines().last().contains("-> 5")
     }
 
     def "Should write nested method call with indentation"() {
@@ -61,7 +59,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 15
-        GqUtils.gqFile.text ==
+        gqFile.file.text ==
                 """nested1()
                   |  nested3()
                   |  -> 5
@@ -70,15 +68,13 @@ class GqTest extends BaseSpecification {
     }
 
     // --- Technical debt
-    // Groovy doc recommends CompileStatic for GqTransformation to make compilation quicker
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
     // Use MethodClosure syntax to have better IDE support `GqUtils.&printToFile as MethodClosure`
-    // Merge GqSupport and @Gq so that it looks like Gq.gq and @Gq.T
-    // gString verbatimText is not implemented. This affects decompilation but not runtime. e.g. ${methodNode.name}(parameters) instead of ${method.name)($1, $2, $3)
 
     // --- Feature
-    // @Gq indentation for nested annotated method call
+    // Indentation must work even if nested method have exception
+    // GqSupport.gq to support void return type
     // @Gq(vars=true) to print all variable expression
     // q.d
 }

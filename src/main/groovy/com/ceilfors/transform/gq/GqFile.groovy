@@ -40,6 +40,15 @@ class GqFile implements CodeFlowListener {
         methodCallStackSize--
     }
 
+    @Override
+    Object expressionProcessed(ExpressionInfo expressionInfo) {
+        file.append(" " * (methodCallStackSize * 2))
+        file.append("${expressionInfo.text.replace('(', '').replace(')', '')}=${expressionInfo.value}")
+        file.append("\n")
+
+        return expressionInfo.value
+    }
+
     File getFile() {
         String gqDir = directory
         if (!gqDir) {

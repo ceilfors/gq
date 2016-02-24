@@ -1,6 +1,4 @@
 package com.ceilfors.transform.gq.ast
-
-import com.ceilfors.transform.gq.GqUtils
 /**
  * @author ceilfors
  */
@@ -15,6 +13,6 @@ class GqSupportTest extends BaseSpecification {
 
         then:
         result == 8
-        GqUtils.gqFile.text == ("3 + 5=8\n")
+        gqFile.file.text == ("3 + 5=8\n")
     }
 }

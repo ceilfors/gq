@@ -7,7 +7,7 @@ enum SingletonCodeFlowListenerManager implements CodeFlowListener {
 
     INSTANCE;
 
-    private List<CodeFlowListener> codeFlowListeners = [
+    List<CodeFlowListener> codeFlowListeners = [
             new GqFile()
     ]
 
@@ -24,5 +24,11 @@ enum SingletonCodeFlowListenerManager implements CodeFlowListener {
     @Override
     void methodEnded() {
         codeFlowListeners*.methodEnded()
+    }
+
+    @Override
+    Object expressionProcessed(ExpressionInfo expressionInfo) {
+        codeFlowListeners*.expressionProcessed(expressionInfo)
+        return expressionInfo.value
     }
 }

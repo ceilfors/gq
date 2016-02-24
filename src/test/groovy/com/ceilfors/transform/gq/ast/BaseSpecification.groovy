@@ -1,10 +1,10 @@
 package com.ceilfors.transform.gq.ast
 
-import com.ceilfors.transform.gq.GqUtils
+import com.ceilfors.transform.gq.GqFile
+import com.ceilfors.transform.gq.SingletonCodeFlowListenerManager
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
-
 /**
  * @author ceilfors
  */
@@ -13,12 +13,11 @@ class BaseSpecification extends Specification {
     @Rule
     TemporaryFolder temporaryFolder
 
-    def setup() {
-        System.setProperty(GqUtils.TEMP_DIR, temporaryFolder.newFolder().absolutePath)
-    }
+    GqFile gqFile
 
-    def cleanup() {
-        System.clearProperty(GqUtils.TEMP_DIR)
+    def setup() {
+        gqFile = new GqFile(temporaryFolder.newFolder().absolutePath)
+        SingletonCodeFlowListenerManager.INSTANCE.codeFlowListeners = [gqFile]
     }
 
     static <T> T newExample(Class<T> clasz) {

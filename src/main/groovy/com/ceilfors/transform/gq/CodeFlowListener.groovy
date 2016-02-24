@@ -21,4 +21,11 @@ interface CodeFlowListener {
      * Called when a method is ended and the method return type is void.
      */
     void methodEnded()
+
+    /**
+     * Called when an expression has just been processed
+     * @param expressionInfo the expression information
+     * @return the expression result, useful for method chaining
+     */
+    Object expressionProcessed(ExpressionInfo expressionInfo)
 }

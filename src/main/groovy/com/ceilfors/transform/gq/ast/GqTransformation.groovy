@@ -33,7 +33,7 @@ public class GqTransformation extends AbstractASTTransformation {
             BlockStatement newCode = new BlockStatement([
                     methodStartedS(methodNode),
                     callClosureAndKeepResultS(wrappedOriginalCode, result),
-                    fireEndMethodS(voidReturnType ? null : result)
+                    methodEndedS(voidReturnType ? null : result)
             ], new VariableScope())
 
             if (!voidReturnType) {
@@ -110,7 +110,7 @@ public class GqTransformation extends AbstractASTTransformation {
         }[0] as Statement
     }
 
-    private Statement fireEndMethodS(VariableExpression result) {
+    private Statement methodEndedS(VariableExpression result) {
         new AstBuilder().buildFromSpec {
             expression {
                 methodCall {
