@@ -1,6 +1,7 @@
 package com.ceilfors.transform.gq.ast
 
-import com.ceilfors.transform.gq.GqUtils
+import com.ceilfors.transform.gq.MethodInfo
+import com.ceilfors.transform.gq.SingletonCodeFlowListenerManager
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.ClosureExpression
@@ -26,17 +27,17 @@ public class GqTransformation extends AbstractASTTransformation {
             MethodNode methodNode = annotatedNode as MethodNode
 
             def result = varX("result")
+            boolean voidReturnType = methodNode.returnType == ClassHelper.make(void)
             def wrappedOriginalCode = wrapInClosure(methodNode)
 
             BlockStatement newCode = new BlockStatement([
-                    printMethodHeaderS(methodNode),
-                    fireStartMethodS(),
+                    methodStartedS(methodNode),
                     callClosureAndKeepResultS(wrappedOriginalCode, result),
-                    fireEndMethodS()
+                    fireEndMethodS(voidReturnType ? null : result)
             ], new VariableScope())
 
-            if (methodNode.returnType != ClassHelper.make(void)) {
-                newCode.statements.addAll([printVariableS(result), returnS(result)])
+            if (!voidReturnType) {
+                newCode.statements.add(returnS(result))
             }
 
             methodNode.code = newCode
@@ -61,35 +62,6 @@ public class GqTransformation extends AbstractASTTransformation {
         return closure
     }
 
-    private Statement printMethodHeaderS(MethodNode methodNode) {
-        new AstBuilder().buildFromSpec {
-            block {
-                expression {
-                    staticMethodCall(GqUtils, "printToFile") {
-                        argumentList {
-                            gString "${methodNode.name}(parameters)", {
-                                strings {
-                                    constant "${methodNode.name}(" as String
-                                    for (int i = 0; i < methodNode.parameters.size(); i++) {
-                                        if (i != 0) {
-                                            constant ', '
-                                        }
-                                    }
-                                    constant ')'
-                                }
-                                values {
-                                    for (Parameter parameter in methodNode.parameters) {
-                                        variable parameter.name
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }[0] as Statement
-    }
-
     private Statement callClosureAndKeepResultS(ClosureExpression closure, VariableExpression resultVariable) {
         new AstBuilder().buildFromSpec {
             expression {
@@ -107,38 +79,51 @@ public class GqTransformation extends AbstractASTTransformation {
         }[0] as Statement
     }
 
-    private Statement printVariableS(VariableExpression variableExpression) {
+    private Statement methodStartedS(MethodNode methodNode) {
         new AstBuilder().buildFromSpec {
             expression {
-                staticMethodCall(GqUtils, "printToFile") {
+                methodCall {
+                    property {
+                        classExpression SingletonCodeFlowListenerManager
+                        constant "INSTANCE"
+                    }
+                    constant "methodStarted"
                     argumentList {
-                        binary {
-                            constant "-> "
-                            token "+"
-                            expression.add(variableExpression)
+                        constructorCall(MethodInfo) {
+                            argumentList {
+                                constant methodNode.name
+                                list {
+                                    for (Parameter parameter in methodNode.parameters) {
+                                        constant parameter.name
+                                    }
+                                }
+                                list {
+                                    for (Parameter parameter in methodNode.parameters) {
+                                        variable parameter.name
+                                    }
+                                }
+                            }
                         }
-
                     }
                 }
             }
         }[0] as Statement
     }
 
-    private Statement fireStartMethodS() {
+    private Statement fireEndMethodS(VariableExpression result) {
         new AstBuilder().buildFromSpec {
             expression {
-                staticMethodCall(GqUtils, "startMethod") {
-                    argumentList {}
-                }
-            }
-        }[0] as Statement
-    }
-
-    private Statement fireEndMethodS() {
-        new AstBuilder().buildFromSpec {
-            expression {
-                staticMethodCall(GqUtils, "endMethod") {
-                    argumentList {}
+                methodCall {
+                    property {
+                        classExpression SingletonCodeFlowListenerManager
+                        constant "INSTANCE"
+                    }
+                    constant "methodEnded"
+                    argumentList {
+                        if (result) {
+                            expression.add(result)
+                        }
+                    }
                 }
             }
         }[0] as Statement
