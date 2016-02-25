@@ -70,7 +70,7 @@ class GqTest extends BaseSpecification {
     // --- Technical debt
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
-    // Use MethodClosure syntax to have better IDE support `GqUtils.&printToFile as MethodClosure`
+    // Use MethodClosure syntax to have better IDE support `xx.&printToFile as MethodClosure`
 
     // --- Feature
     // Indentation must work even if nested method have exception

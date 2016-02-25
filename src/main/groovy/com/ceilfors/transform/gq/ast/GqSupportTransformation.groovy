@@ -34,7 +34,7 @@ class GqSupportTransformation implements ASTTransformation {
             @Override
             Expression transform(Expression expression) {
                 if (expression instanceof StaticMethodCallExpression && expression.ownerType.name == GqSupport.name) {
-                    // Traps normal method call to GqSupport and reroute to GqUtils
+                    // Traps normal method call to GqSupport and reroute to CodeFlowListeners
                     return expressionProcessedX(expression)
                 }
                 return super.transform(expression)
