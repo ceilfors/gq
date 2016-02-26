@@ -3,7 +3,7 @@ package com.ceilfors.transform.gq
 /**
  * @author ceilfors
  */
-enum SingletonCodeFlowListenerManager implements CodeFlowListener {
+enum SingletonCodeFlowManager implements CodeFlowListener {
 
     INSTANCE;
 

@@ -1,7 +1,7 @@
 package com.ceilfors.transform.gq.ast
 
 import com.ceilfors.transform.gq.GqFile
-import com.ceilfors.transform.gq.SingletonCodeFlowListenerManager
+import com.ceilfors.transform.gq.SingletonCodeFlowManager
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -17,7 +17,7 @@ class BaseSpecification extends Specification {
 
     def setup() {
         gqFile = new GqFile(temporaryFolder.newFolder().absolutePath)
-        SingletonCodeFlowListenerManager.INSTANCE.codeFlowListeners = [gqFile]
+        SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [gqFile]
     }
 
     static <T> T newExample(Class<T> clasz) {

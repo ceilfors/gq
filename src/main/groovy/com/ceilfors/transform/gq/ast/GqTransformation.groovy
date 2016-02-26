@@ -1,7 +1,5 @@
 package com.ceilfors.transform.gq.ast
 
-import com.ceilfors.transform.gq.MethodInfo
-import com.ceilfors.transform.gq.SingletonCodeFlowListenerManager
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.ClosureExpression
@@ -13,8 +11,7 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 
-import static org.codehaus.groovy.ast.tools.GeneralUtils.returnS
-import static org.codehaus.groovy.ast.tools.GeneralUtils.varX
+import static org.codehaus.groovy.ast.tools.GeneralUtils.*
 
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class GqTransformation extends AbstractASTTransformation {
@@ -28,16 +25,15 @@ public class GqTransformation extends AbstractASTTransformation {
 
             def result = varX("result")
             boolean voidReturnType = methodNode.returnType == ClassHelper.make(void)
-            def wrappedOriginalCode = wrapInClosure(methodNode)
 
             BlockStatement newCode = new BlockStatement([
-                    methodStartedS(methodNode),
-                    callClosureAndKeepResultS(wrappedOriginalCode, result),
-                    methodEndedS(voidReturnType ? null : result)
+                    stmt(CodeFlowManagers.methodStarted(MethodInfos.ctor(methodNode))),
+                    callClosureAndKeepResultS(wrapInClosure(methodNode), result),
+                    stmt(CodeFlowManagers.methodEnded(voidReturnType ? null : result))
             ], new VariableScope())
 
             if (!voidReturnType) {
-                newCode.statements.add(returnS(result))
+                newCode.addStatement(returnS(result))
             }
 
             methodNode.code = newCode
@@ -74,56 +70,6 @@ public class GqTransformation extends AbstractASTTransformation {
                         argumentList {}
                     }
 
-                }
-            }
-        }[0] as Statement
-    }
-
-    private Statement methodStartedS(MethodNode methodNode) {
-        new AstBuilder().buildFromSpec {
-            expression {
-                methodCall {
-                    property {
-                        classExpression SingletonCodeFlowListenerManager
-                        constant "INSTANCE"
-                    }
-                    constant "methodStarted"
-                    argumentList {
-                        constructorCall(MethodInfo) {
-                            argumentList {
-                                constant methodNode.name
-                                list {
-                                    for (Parameter parameter in methodNode.parameters) {
-                                        constant parameter.name
-                                    }
-                                }
-                                list {
-                                    for (Parameter parameter in methodNode.parameters) {
-                                        variable parameter.name
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }[0] as Statement
-    }
-
-    private Statement methodEndedS(VariableExpression result) {
-        new AstBuilder().buildFromSpec {
-            expression {
-                methodCall {
-                    property {
-                        classExpression SingletonCodeFlowListenerManager
-                        constant "INSTANCE"
-                    }
-                    constant "methodEnded"
-                    argumentList {
-                        if (result) {
-                            expression.add(result)
-                        }
-                    }
                 }
             }
         }[0] as Statement

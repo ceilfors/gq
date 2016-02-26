@@ -70,9 +70,9 @@ class GqTest extends BaseSpecification {
     // --- Technical debt
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
-    // Use MethodClosure syntax to have better IDE support `xx.&printToFile as MethodClosure`
 
     // --- Feature
+    // Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
     // Indentation must work even if nested method have exception
     // GqSupport.gq to support void return type
     // @Gq(vars=true) to print all variable expression
