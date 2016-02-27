@@ -72,7 +72,6 @@ class GqTest extends BaseSpecification {
     // Remove ast package as it's a useless layer.
 
     // --- Feature
-    // GqSupport must print the context it's in e.g. *method_name: *expression=result
     // Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
     // Indentation must work even if nested method have exception
     // GqSupport.gq to support void return type

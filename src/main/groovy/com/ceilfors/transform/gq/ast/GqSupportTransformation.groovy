@@ -4,6 +4,7 @@ import com.ceilfors.transform.gq.GqSupport
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassCodeExpressionTransformer
 import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.StaticMethodCallExpression
@@ -11,6 +12,7 @@ import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.ASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
+
 /**
  * @author ceilfors
  */
@@ -21,9 +23,17 @@ class GqSupportTransformation implements ASTTransformation {
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
         def transformer = new ClassCodeExpressionTransformer() {
 
+            String currentMethodName
+
             @Override
             protected SourceUnit getSourceUnit() {
                 sourceUnit
+            }
+
+            @Override
+            protected void visitConstructorOrMethod(MethodNode node, boolean isConstructor) {
+                currentMethodName = node.name
+                super.visitConstructorOrMethod(node, isConstructor)
             }
 
             @Override
@@ -31,7 +41,7 @@ class GqSupportTransformation implements ASTTransformation {
                 if (expression instanceof StaticMethodCallExpression && expression.ownerType.name == GqSupport.name) {
                     // Traps normal method call to GqSupport and reroute to CodeFlowListeners
                     def originalArgs = (expression.arguments as ArgumentListExpression).expressions[0]
-                    return CodeFlowManagers.expressionProcessed(ExpressionInfos.ctor(getSourceUnit(), originalArgs))
+                    return CodeFlowManagers.expressionProcessed(ExpressionInfos.ctor(getSourceUnit(), currentMethodName, originalArgs))
                 }
                 return super.transform(expression)
             }

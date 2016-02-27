@@ -14,8 +14,8 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
  */
 class ExpressionInfos {
 
-    static ConstructorCallExpression ctor(SourceUnit sourceUnit, Expression x) {
+    static ConstructorCallExpression ctor(SourceUnit sourceUnit, String methodName, Expression x) {
         def text = sourceUnit.getSample(x.lineNumber, 0, null).substring(x.columnNumber - 1, x.lastColumnNumber - 1)
-        new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(text), x))
+        new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
     }
 }

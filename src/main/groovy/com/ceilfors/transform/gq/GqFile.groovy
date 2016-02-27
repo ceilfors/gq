@@ -43,7 +43,7 @@ class GqFile implements CodeFlowListener {
     @Override
     Object expressionProcessed(ExpressionInfo expressionInfo) {
         file.append(" " * (methodCallStackSize * 2))
-        file.append("${expressionInfo.text}=${expressionInfo.value}")
+        file.append("${expressionInfo.methodName}: ${expressionInfo.text}=${expressionInfo.value}")
         file.append("\n")
 
         return expressionInfo.value
