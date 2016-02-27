@@ -72,9 +72,12 @@ class GqTest extends BaseSpecification {
     // Remove ast package as it's a useless layer.
 
     // --- Feature
+    // GqSupport must print the context it's in e.g. *method_name: *expression=result
     // Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
     // Indentation must work even if nested method have exception
     // GqSupport.gq to support void return type
     // @Gq(vars=true) to print all variable expression
+    // GqSupport must support multiple arguments e.g. gc(3+5, 10+10, 15+15)
+    // GqSupport must support multiline text e.g. gc(3+\n\n5) -> Trim the new line. See spock's SourceLookup?
     // q.d
 }
