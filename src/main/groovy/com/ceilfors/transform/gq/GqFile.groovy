@@ -57,6 +57,11 @@ class GqFile implements CodeFlowListener {
     }
 
     @Override
+    void exceptionThrown(ExceptionInfo exceptionInfo) {
+        methodCallStackSize--
+    }
+
+    @Override
     Object expressionProcessed(ExpressionInfo expressionInfo) {
         file.append(" " * (methodCallStackSize * 2))
         file.append("${expressionInfo.methodName}: ${expressionInfo.text}=${expressionInfo.value}")

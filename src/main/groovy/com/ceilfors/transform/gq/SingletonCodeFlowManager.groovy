@@ -43,6 +43,11 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
     }
 
     @Override
+    void exceptionThrown(ExceptionInfo exceptionInfo) {
+        codeFlowListeners*.exceptionThrown(exceptionInfo)
+    }
+
+    @Override
     Object expressionProcessed(ExpressionInfo expressionInfo) {
         codeFlowListeners*.expressionProcessed(expressionInfo)
         return expressionInfo.value

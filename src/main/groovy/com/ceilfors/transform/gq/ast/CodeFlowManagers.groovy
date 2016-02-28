@@ -44,4 +44,9 @@ class CodeFlowManagers {
         Expression args = result == null ? args(Parameter.EMPTY_ARRAY) : args(result)
         new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args)
     }
+
+    static MethodCallExpression exceptionThrown() {
+        String method = (SingletonCodeFlowManager.INSTANCE.&exceptionThrown as MethodClosure).method
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(constX(null)))
+    }
 }

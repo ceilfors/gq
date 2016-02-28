@@ -19,6 +19,7 @@ package com.ceilfors.transform.gq.ast
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.ClosureExpression
+import org.codehaus.groovy.ast.expr.EmptyExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.Statement
@@ -27,7 +28,11 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 
-import static org.codehaus.groovy.ast.tools.GeneralUtils.*
+import static org.codehaus.groovy.ast.tools.GeneralUtils.declS
+import static org.codehaus.groovy.ast.tools.GeneralUtils.returnS
+import static org.codehaus.groovy.ast.tools.GeneralUtils.stmt
+import static org.codehaus.groovy.ast.tools.GeneralUtils.varX
+
 
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class GqTransformation extends AbstractASTTransformation {
@@ -44,7 +49,24 @@ public class GqTransformation extends AbstractASTTransformation {
 
             BlockStatement newCode = new BlockStatement([
                     stmt(CodeFlowManagers.methodStarted(MethodInfos.ctor(methodNode))),
-                    callClosureAndKeepResultS(wrapInClosure(methodNode), result),
+                    declS(result, new EmptyExpression()),
+                    new AstBuilder().buildFromSpec {
+                        tryCatch {
+                            block {
+                                expression.add(callClosureAndKeepResultS(wrapInClosure(methodNode), result))
+                            }
+                            empty()
+                            catchStatement {
+                                parameter 'e': Exception.class
+                                block {
+                                    expression.add(stmt(CodeFlowManagers.exceptionThrown()))
+                                    throwStatement {
+                                        variable "e"
+                                    }
+                                }
+                            }
+                        }
+                    }[0] as Statement,
                     stmt(CodeFlowManagers.methodEnded(voidReturnType ? null : result))
             ], new VariableScope())
 
@@ -77,7 +99,7 @@ public class GqTransformation extends AbstractASTTransformation {
     private Statement callClosureAndKeepResultS(ClosureExpression closure, VariableExpression resultVariable) {
         new AstBuilder().buildFromSpec {
             expression {
-                declaration {
+                binary {
                     expression.add(resultVariable)
                     token "="
                     methodCall {

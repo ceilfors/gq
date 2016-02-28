@@ -83,16 +83,41 @@ class GqTest extends BaseSpecification {
                   |""".stripMargin()
     }
 
+
+    def "Should restore indentation when an exception is thrown"() {
+        setup:
+        def example = newExample(GqExample)
+
+        when:
+        example.nestedWithException1()
+
+        then:
+        thrown(RuntimeException)
+
+        when:
+        gqFile.file.delete()
+        example.nested1()
+
+        then:
+        gqFile.file.text ==
+                """nested1()
+                  |  nested3()
+                  |  -> 5
+                  |-> 15
+                  |""".stripMargin()
+    }
+
     // --- Technical debt
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
+    // Refactor GqFile to be unit testable
 
     // --- Feature
-    // Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
-    // Indentation must work even if nested method have exception
-    // GqSupport.gq to support void return type
-    // @Gq(vars=true) to print all variable expression
+    // @Gq must print exception details when the annotated method throws exception
     // GqSupport must support multiple arguments e.g. gc(3+5, 10+10, 15+15)
     // GqSupport must support multiline text e.g. gc(3+\n\n5) -> Trim the new line. See spock's SourceLookup?
+    // GqSupport.gq to support void return type
+    // Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
+    // @Gq(vars=true) to print all variable expression
     // q.d
 }

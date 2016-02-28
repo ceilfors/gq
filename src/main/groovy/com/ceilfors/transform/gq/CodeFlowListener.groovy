@@ -39,6 +39,11 @@ interface CodeFlowListener {
     void methodEnded()
 
     /**
+     * Called the method throws an exception.
+     */
+    void exceptionThrown(ExceptionInfo exceptionInfo)
+
+    /**
      * Called when an expression has just been processed
      * @param expressionInfo the expression information
      * @return the expression result, useful for method chaining

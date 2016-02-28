@@ -14,48 +14,16 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq.ast
+package com.ceilfors.transform.gq
 
 /**
  * @author ceilfors
  */
-class GqExample {
+class ExceptionInfo {
 
-    @Gq
-    int "return 5"() {
-        5
-    }
+    Throwable exception
 
-    @Gq
-    int add(int x, int y) {
-        return x + y
-    }
-
-    @Gq
-    void "return void"() {
-    }
-
-    @Gq
-    int nested1() {
-        return nested2() + 5
-    }
-
-    private int nested2() {
-        return nested3() + 5
-    }
-
-    @Gq
-    private int nested3() {
-        return 5
-    }
-
-    @Gq
-    int nestedWithException1() {
-        nestedWithException2()
-    }
-
-    @Gq
-    private int nestedWithException2() {
-        throw new RuntimeException()
+    ExceptionInfo(Throwable exception) {
+        this.exception = exception
     }
 }
