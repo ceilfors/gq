@@ -22,6 +22,21 @@ package com.ceilfors.transform.gq.ast
 class GqExample {
 
     @Gq
+    int throwException() {
+        throw new RuntimeException("Hello!")
+    }
+
+    @Gq
+    int nestedWithException1() {
+        nestedWithException2()
+    }
+
+    @Gq
+    private int nestedWithException2() {
+        throw new RuntimeException("Hello!")
+    }
+
+    @Gq
     int "return 5"() {
         5
     }
@@ -47,15 +62,5 @@ class GqExample {
     @Gq
     private int nested3() {
         return 5
-    }
-
-    @Gq
-    int nestedWithException1() {
-        nestedWithException2()
-    }
-
-    @Gq
-    private int nestedWithException2() {
-        throw new RuntimeException()
     }
 }

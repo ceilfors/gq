@@ -45,8 +45,8 @@ class CodeFlowManagers {
         new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args)
     }
 
-    static MethodCallExpression exceptionThrown() {
+    static MethodCallExpression exceptionThrown(Expression exceptionInfo) {
         String method = (SingletonCodeFlowManager.INSTANCE.&exceptionThrown as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(constX(null)))
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(exceptionInfo))
     }
 }

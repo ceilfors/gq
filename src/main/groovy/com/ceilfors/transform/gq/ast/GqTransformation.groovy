@@ -23,6 +23,7 @@ import org.codehaus.groovy.ast.expr.EmptyExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.Statement
+import org.codehaus.groovy.ast.stmt.TryCatchStatement
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
@@ -37,6 +38,7 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.varX
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class GqTransformation extends AbstractASTTransformation {
 
+    @SuppressWarnings("UnnecessaryQualifiedReference")
     public void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
         init(astNodes, sourceUnit)
 
@@ -45,28 +47,17 @@ public class GqTransformation extends AbstractASTTransformation {
             MethodNode methodNode = annotatedNode as MethodNode
 
             def result = varX("result")
+            def exception = varX("e")
             boolean voidReturnType = methodNode.returnType == ClassHelper.make(void)
 
             BlockStatement newCode = new BlockStatement([
                     stmt(CodeFlowManagers.methodStarted(MethodInfos.ctor(methodNode))),
                     declS(result, new EmptyExpression()),
-                    new AstBuilder().buildFromSpec {
-                        tryCatch {
-                            block {
-                                expression.add(callClosureAndKeepResultS(wrapInClosure(methodNode), result))
-                            }
-                            empty()
-                            catchStatement {
-                                parameter 'e': Exception.class
-                                block {
-                                    expression.add(stmt(CodeFlowManagers.exceptionThrown()))
-                                    throwStatement {
-                                        variable "e"
-                                    }
-                                }
-                            }
-                        }
-                    }[0] as Statement,
+                    tryAndRethrow(
+                            callClosureAndKeepResult(wrapInClosure(methodNode), result),
+                            stmt(CodeFlowManagers.exceptionThrown(ExceptionInfos.ctor(exception))),
+                            exception
+                    ),
                     stmt(CodeFlowManagers.methodEnded(voidReturnType ? null : result))
             ], new VariableScope())
 
@@ -78,6 +69,26 @@ public class GqTransformation extends AbstractASTTransformation {
         } else {
             throw new IllegalStateException("Gq annotation is only usable in methods.")
         }
+    }
+
+    private TryCatchStatement tryAndRethrow(Statement tryBlock, Statement catchBlock, VariableExpression exception) {
+        new AstBuilder().buildFromSpec {
+            tryCatch {
+                block {
+                    expression.add(tryBlock)
+                }
+                empty()
+                catchStatement {
+                    parameter "${exception.name}": Exception.class
+                    block {
+                        expression.add(catchBlock)
+                        throwStatement {
+                            expression.add(exception)
+                        }
+                    }
+                }
+            }
+        }[0] as TryCatchStatement
     }
 
     private ClosureExpression wrapInClosure(MethodNode methodNode) {
@@ -96,7 +107,7 @@ public class GqTransformation extends AbstractASTTransformation {
         return closure
     }
 
-    private Statement callClosureAndKeepResultS(ClosureExpression closure, VariableExpression resultVariable) {
+    private Statement callClosureAndKeepResult(ClosureExpression closure, VariableExpression resultVariable) {
         new AstBuilder().buildFromSpec {
             expression {
                 binary {

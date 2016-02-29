@@ -16,6 +16,8 @@
 
 package com.ceilfors.transform.gq
 
+import org.codehaus.groovy.runtime.StackTraceUtils
+
 /**
  * @author ceilfors
  */
@@ -59,6 +61,12 @@ class GqFile implements CodeFlowListener {
     @Override
     void exceptionThrown(ExceptionInfo exceptionInfo) {
         methodCallStackSize--
+
+        file.append(" " * (methodCallStackSize * 2))
+        Throwable exception = exceptionInfo.exception
+        def rootStackTraceElement = StackTraceUtils.sanitizeRootCause(exception).stackTrace[0]
+        file.append("!> ${exception.class.simpleName}('${exception.message}') at ${rootStackTraceElement.fileName}:${rootStackTraceElement.lineNumber}")
+        file.append("\n")
     }
 
     @Override
