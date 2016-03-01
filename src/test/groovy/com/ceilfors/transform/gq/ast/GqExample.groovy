@@ -27,13 +27,23 @@ class GqExample {
     }
 
     @Gq
-    int nestedWithException1() {
-        nestedWithException2()
+    int nestedThrowException1() {
+        nestedThrowException2()
     }
 
     @Gq
-    private int nestedWithException2() {
-        throw new RuntimeException("Hello!")
+    private int nestedThrowException2() {
+        // some comment
+        nestedThrowException3()
+    }
+
+    @Gq
+    private int nestedThrowException3() {
+        // some comment
+        { ->
+            throw new RuntimeException("Hello!")
+        }.call()
+        return 5
     }
 
     @Gq

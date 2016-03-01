@@ -25,7 +25,7 @@ class GqFile implements CodeFlowListener {
 
     public static String TEMP_DIR = "GQTMP"
 
-    private int methodCallStackSize = 0
+    private Stack<MethodInfo> methodCalls = [] as Set
     private String directory
 
     GqFile(String directory) {
@@ -37,45 +37,77 @@ class GqFile implements CodeFlowListener {
 
     @Override
     void methodStarted(MethodInfo methodInfo) {
-        file.append(" " * (methodCallStackSize * 2))
+        file.append(" " * (methodCalls.size() * 2))
         file.append("${methodInfo.name}(${methodInfo.args.join(", ")})")
         file.append("\n")
 
-        methodCallStackSize++
+        methodCalls.push(methodInfo)
     }
 
     @Override
     void methodEnded(Object result) {
-        methodCallStackSize--
+        methodCalls.pop()
 
-        file.append(" " * (methodCallStackSize * 2))
+        file.append(" " * (methodCalls.size() * 2))
         file.append("-> $result")
         file.append("\n")
     }
 
     @Override
     void methodEnded() {
-        methodCallStackSize--
+        methodCalls.pop()
     }
 
     @Override
     void exceptionThrown(ExceptionInfo exceptionInfo) {
-        methodCallStackSize--
+        MethodInfo methodInfo = methodCalls.pop()
 
-        file.append(" " * (methodCallStackSize * 2))
+        file.append(" " * (methodCalls.size() * 2))
         Throwable exception = exceptionInfo.exception
-        def rootStackTraceElement = StackTraceUtils.sanitizeRootCause(exception).stackTrace[0]
-        file.append("!> ${exception.class.simpleName}('${exception.message}') at ${rootStackTraceElement.fileName}:${rootStackTraceElement.lineNumber}")
+        StackTraceUtils.sanitizeRootCause(exception)
+        sanitizeGeneratedCode(exception)
+        def trace = exception.stackTrace.find { it.methodName == methodInfo.name }
+        file.append("!> ${exception.class.simpleName}('${exception.message}') at ${trace.fileName}:${trace.lineNumber}")
         file.append("\n")
     }
 
     @Override
     Object expressionProcessed(ExpressionInfo expressionInfo) {
-        file.append(" " * (methodCallStackSize * 2))
+        file.append(" " * (methodCalls.size() * 2))
         file.append("${expressionInfo.methodName}: ${expressionInfo.text}=${expressionInfo.value}")
         file.append("\n")
 
         return expressionInfo.value
+    }
+
+    /**
+     * Sanitize generated code from stack trace.
+     * @param t the throwable to be sanitized
+     */
+    private static sanitizeGeneratedCode(Throwable t) {
+        StackTraceElement[] trace = t.stackTrace
+        List<StackTraceElement> newTrace = [] as LinkedList
+        StackTraceElement traceWithoutLineNumber = null
+        for (int i = trace.size() - 1; i >= 0; i--) {
+            def currentTrace = trace[i]
+            if (currentTrace.lineNumber != -1) {
+                if (traceWithoutLineNumber) {
+                    newTrace.add(0, new StackTraceElement(traceWithoutLineNumber.className, traceWithoutLineNumber.methodName, traceWithoutLineNumber.fileName, currentTrace.lineNumber))
+                    traceWithoutLineNumber = null
+                } else {
+                    newTrace.add(0, currentTrace)
+                }
+
+            } else if (currentTrace.fileName != null // Generated code from Groovy?
+                    && traceWithoutLineNumber == null) { // Ignore trace without line number in between
+                traceWithoutLineNumber = currentTrace
+            }
+        }
+
+        StackTraceElement[] clean = new StackTraceElement[newTrace.size()]
+        newTrace.toArray(clean)
+        t.setStackTrace(clean)
+        return t
     }
 
     File getFile() {

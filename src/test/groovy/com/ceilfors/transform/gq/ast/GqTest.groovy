@@ -99,12 +99,32 @@ class GqTest extends BaseSpecification {
                   |""".stripMargin()
     }
 
+    def "Should write exception details if an exception is thrown from a nested method"() {
+        setup:
+        def example = newExample(GqExample)
+
+        when:
+        example.nestedThrowException1()
+
+        then:
+        RuntimeException e = thrown(RuntimeException)
+        e.message == "Hello!"
+        gqFile.file.text ==
+                """nestedThrowException1()
+                  |  nestedThrowException2()
+                  |    nestedThrowException3()
+                  |    !> RuntimeException('Hello!') at GqExample.groovy:43
+                  |  !> RuntimeException('Hello!') at GqExample.groovy:37
+                  |!> RuntimeException('Hello!') at GqExample.groovy:31
+                  |""".stripMargin()
+    }
+
     def "Should restore indentation when an exception is thrown"() {
         setup:
         def example = newExample(GqExample)
 
         when:
-        example.nestedWithException1()
+        example.nestedThrowException1()
 
         then:
         thrown(RuntimeException)
@@ -123,12 +143,12 @@ class GqTest extends BaseSpecification {
     }
 
     // --- Technical debt
+    // Refactor GqFile to be unit testable e.g. introduce indent method, etc.
+    // Make GqFile to accept a Writer. Move System property lookup to SingletonCodeFlowManager.
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
-    // Refactor GqFile to be unit testable
 
     // --- Feature
-    // @Gq Exception - must handle nested method calls. Currently it prints the exception details on every nested call
     // @Gq Exception - Print source code context e.g. source code snippets and line numbers
     // @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
     // GqSupport - support multiple arguments e.g. gc(3+5, 10+10, 15+15)
