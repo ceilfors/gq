@@ -29,11 +29,17 @@ class BaseSpecification extends Specification {
     @Rule
     TemporaryFolder temporaryFolder
 
-    GqFile gqFile
+    File gqFile
+    private Writer writer
 
     def setup() {
-        gqFile = new GqFile(temporaryFolder.newFolder().absolutePath)
-        SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [gqFile]
+        gqFile = new File(temporaryFolder.newFolder().absolutePath, "gq")
+        writer = new FileWriter(gqFile)
+        SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [new GqFile(writer)]
+    }
+
+    def cleanup() {
+        writer.close()
     }
 
     static <T> T newExample(Class<T> clasz) {

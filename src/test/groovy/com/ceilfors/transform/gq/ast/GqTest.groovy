@@ -27,7 +27,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 5
-        gqFile.file.readLines().first().contains("return 5()")
+        gqFile.readLines().first().contains("return 5()")
     }
 
     def "Should write the arguments of a method call"() {
@@ -39,7 +39,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 6
-        gqFile.file.readLines().first().contains("add(3, 3)")
+        gqFile.readLines().first().contains("add(3, 3)")
     }
 
     def "Should be able to write a method when its return type is void"() {
@@ -50,7 +50,7 @@ class GqTest extends BaseSpecification {
         example."return void"()
 
         then:
-        gqFile.file.text == ("return void()\n")
+        gqFile.text == ("return void()\n")
     }
 
 
@@ -63,7 +63,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 5
-        gqFile.file.readLines().last().contains("-> 5")
+        gqFile.readLines().last().contains("-> 5")
     }
 
     def "Should write nested method call with indentation"() {
@@ -75,7 +75,7 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 15
-        gqFile.file.text ==
+        gqFile.text ==
                 """nested1()
                   |  nested3()
                   |  -> 5
@@ -93,7 +93,7 @@ class GqTest extends BaseSpecification {
         then:
         RuntimeException e = thrown(RuntimeException)
         e.message == "Hello!"
-        gqFile.file.text ==
+        gqFile.text ==
                 """throwException()
                   |!> RuntimeException('Hello!') at GqExample.groovy:26
                   |""".stripMargin()
@@ -109,7 +109,7 @@ class GqTest extends BaseSpecification {
         then:
         RuntimeException e = thrown(RuntimeException)
         e.message == "Hello!"
-        gqFile.file.text ==
+        gqFile.text ==
                 """nestedThrowException1()
                   |  nestedThrowException2()
                   |    nestedThrowException3()
@@ -124,29 +124,31 @@ class GqTest extends BaseSpecification {
         def example = newExample(GqExample)
 
         when:
-        example.nestedThrowException1()
+        example.throwException()
 
         then:
         thrown(RuntimeException)
 
         when:
-        gqFile.file.delete()
         example.nested1()
 
         then:
-        gqFile.file.text ==
+        gqFile.text.endsWith(
                 """nested1()
                   |  nested3()
                   |  -> 5
                   |-> 15
-                  |""".stripMargin()
+                  |""".stripMargin())
     }
 
     // --- Technical debt
-    // Refactor GqFile to be unit testable e.g. introduce indent method, etc.
-    // Make GqFile to accept a Writer. Move System property lookup to SingletonCodeFlowManager.
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
+    // GqFile that's created by SingletonCodeFlowManager is never closed
+    // This code in GqFile seems to be a responsibility of someone else: writer.indentLevel = methodCalls.size()
+
+    // -- Bug
+    // @zefifier hits exception when trying to parse META-INF.services due to copyright. Try to move acceptance test to a different module to reproduce
 
     // --- Feature
     // @Gq Exception - Print source code context e.g. source code snippets and line numbers
