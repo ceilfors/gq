@@ -146,9 +146,8 @@ class GqTest extends BaseSpecification {
     // Remove ast package as it's a useless layer.
     // GqFile that's created by SingletonCodeFlowManager is never closed
     // This code in GqFile seems to be a responsibility of someone else: writer.indentLevel = methodCalls.size()
-
-    // -- Bug
-    // @zefifier hits exception when trying to parse META-INF.services due to copyright. Try to move acceptance test to a different module to reproduce
+    // @Grab test has hardcoded version number
+    // @Grab test need to exclude groovy to avoid GROOVY-7613. Can we make groovy dependency as provided?
 
     // --- Feature
     // @Gq Exception - Print source code context e.g. source code snippets and line numbers

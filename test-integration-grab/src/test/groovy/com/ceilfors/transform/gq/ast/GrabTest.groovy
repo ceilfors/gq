@@ -15,32 +15,11 @@
  */
 
 package com.ceilfors.transform.gq.ast
+
 /**
  * @author ceilfors
  */
-class GqSupportTest extends BaseSpecification {
-
-    def "Should write variable expression statement and the evaluated expression"() {
-        setup:
-        def example = newExample(GqSupportExample)
-
-        when:
-        def result = example."3 plus 5"()
-
-        then:
-        result == 8
-        gqFile.text == ("3 plus 5: 3 + 5=8\n")
-    }
-
-    def "Should write method call expression statement and the evaluated expression"() {
-        setup:
-        def example = newExample(GqSupportExample)
-
-        when:
-        def result = example.nested1(5)
-
-        then:
-        result == 5
-        gqFile.text == ("nested1: nested2(value)=5\n")
-    }
+@Grab('com.ceilfors.groovy:gq:0.1.0-SNAPSHOT')
+@GrabExclude('org.codehaus.groovy:groovy-all')
+class GrabTest {
 }
