@@ -20,6 +20,5 @@ package com.ceilfors.transform.gq.ast
  * @author ceilfors
  */
 @Grab('com.ceilfors.groovy:gq:0.1.0-SNAPSHOT')
-@GrabExclude('org.codehaus.groovy:groovy-all')
 class GrabTest {
 }

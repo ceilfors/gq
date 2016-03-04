@@ -7,9 +7,23 @@ repositories {
     jcenter()
 }
 
+configurations {
+    provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+        test.compileClasspath += configurations.provided
+        test.runtimeClasspath += configurations.provided
+    }
+}
+
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.5'
-    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    provided 'org.codehaus.groovy:groovy-all:2.4.5'
+    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy'
+    }
     testCompile 'junit:junit:4.12'
 }
 

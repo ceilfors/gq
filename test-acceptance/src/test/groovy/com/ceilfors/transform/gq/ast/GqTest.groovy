@@ -146,10 +146,14 @@ class GqTest extends BaseSpecification {
     // Remove ast package as it's a useless layer.
     // GqFile that's created by SingletonCodeFlowManager is never closed
     // This code in GqFile seems to be a responsibility of someone else: writer.indentLevel = methodCalls.size()
-    // @Grab test has hardcoded version number
-    // @Grab test need to exclude groovy to avoid GROOVY-7613. Can we make groovy dependency as provided?
+    // GrabTest has hardcoded version number
+    // GrabTest add real test
+    // GrabTest doesn't always grab the latest SNAPSHOT because @Grab ignores the latest SNAPSHOT in .m2. Try @zefifer grape-amaven or try @Grape's changing attribute
 
     // --- Feature
+    // Running acceptance test in Windows will break due to \n in test
+    // Adopt @zefifier groovy-decorator
+    // When gq file is deleted, gq won't create the file again. This is because of the convert to Writer.
     // @Gq Exception - Print source code context e.g. source code snippets and line numbers
     // @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
     // GqSupport - support multiple arguments e.g. gc(3+5, 10+10, 15+15)
