@@ -16,9 +16,44 @@
 
 package com.ceilfors.transform.gq.ast
 
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 /**
  * @author ceilfors
  */
-@Grab('com.ceilfors.groovy:gq:0.1.0-SNAPSHOT')
 class GrabTest {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder()
+
+    @Test
+    public void "Should be able to use gq with Grab"() {
+        def directory = temporaryFolder.newFolder().absolutePath
+        System.setProperty("GQTMP", directory)
+        def gqFile = new File(directory, "gq")
+        System.setProperty("grape.root", directory)
+
+        String artifactVersion = System.getProperty('gqVersion')
+        String artifactGroup = System.getProperty('gqGroup')
+        String artifactModule = System.getProperty('gqName')
+
+        def test = new GroovyClassLoader().parseClass("""
+
+            import static com.ceilfors.transform.gq.GqSupport.gq
+
+            @Grab(group='${artifactGroup}', module='${artifactModule}', version='${artifactVersion}')
+            class GrabTest {
+
+                int highFive() {
+                    return gq(2 + 3)
+                }
+            }
+        """).newInstance()
+
+        test.highFive()
+
+        assert gqFile.text == "highFive: 2 + 3=5\n".denormalize()
+    }
 }

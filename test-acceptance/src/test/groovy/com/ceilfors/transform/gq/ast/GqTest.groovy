@@ -146,9 +146,6 @@ class GqTest extends BaseSpecification {
     // Remove ast package as it's a useless layer.
     // GqFile that's created by SingletonCodeFlowManager is never closed
     // This code in GqFile seems to be a responsibility of someone else: writer.indentLevel = methodCalls.size()
-    // GrabTest has hardcoded version number
-    // GrabTest add real test
-    // GrabTest doesn't always grab the latest SNAPSHOT because @Grab ignores the latest SNAPSHOT in .m2. Try @zefifer grape-amaven or try @Grape's changing attribute
 
     // --- Feature
     // Adopt @zefifier groovy-decorator

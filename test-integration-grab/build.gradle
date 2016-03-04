@@ -11,10 +11,21 @@ configurations {
 dependencies {
     ivy "org.apache.ivy:ivy:2.3.0"
     compile 'org.codehaus.groovy:groovy-all:2.4.5'
+    testCompile 'junit:junit:4.12'
 }
 
 tasks.withType(GroovyCompile) {
     groovyClasspath += configurations.ivy
+}
+
+tasks.withType(Test) {
+    classpath += configurations.ivy
+}
+
+test {
+    systemProperty 'gqVersion', version
+    systemProperty 'gqGroup', rootProject.group
+    systemProperty 'gqName', rootProject.name
 }
 
 test.dependsOn rootProject.install
