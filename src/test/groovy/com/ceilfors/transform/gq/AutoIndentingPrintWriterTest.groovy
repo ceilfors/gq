@@ -66,6 +66,6 @@ class AutoIndentingPrintWriterTest extends Specification {
         writer.toString() ==
                 """    foonewline
                   |    barhelloworld
-                  |    gq""".stripMargin()
+                  |    gq""".stripMargin().denormalize()
     }
 }

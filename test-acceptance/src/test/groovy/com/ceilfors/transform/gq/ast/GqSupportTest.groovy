@@ -30,7 +30,7 @@ class GqSupportTest extends BaseSpecification {
 
         then:
         result == 8
-        gqFile.text == ("3 plus 5: 3 + 5=8\n")
+        gqFile.text == ("3 plus 5: 3 + 5=8\n".denormalize())
     }
 
     def "Should write method call expression statement and the evaluated expression"() {
@@ -42,6 +42,6 @@ class GqSupportTest extends BaseSpecification {
 
         then:
         result == 5
-        gqFile.text == ("nested1: nested2(value)=5\n")
+        gqFile.text == ("nested1: nested2(value)=5\n".denormalize())
     }
 }

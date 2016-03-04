@@ -50,7 +50,7 @@ class GqTest extends BaseSpecification {
         example."return void"()
 
         then:
-        gqFile.text == ("return void()\n")
+        gqFile.text == ("return void()\n".denormalize())
     }
 
 
@@ -80,7 +80,7 @@ class GqTest extends BaseSpecification {
                   |  nested3()
                   |  -> 5
                   |-> 15
-                  |""".stripMargin()
+                  |""".stripMargin().denormalize()
     }
 
     def "Should write exception details if an exception is thrown"() {
@@ -96,7 +96,7 @@ class GqTest extends BaseSpecification {
         gqFile.text ==
                 """throwException()
                   |!> RuntimeException('Hello!') at GqExample.groovy:26
-                  |""".stripMargin()
+                  |""".stripMargin().denormalize()
     }
 
     def "Should write exception details if an exception is thrown from a nested method"() {
@@ -116,7 +116,7 @@ class GqTest extends BaseSpecification {
                   |    !> RuntimeException('Hello!') at GqExample.groovy:43
                   |  !> RuntimeException('Hello!') at GqExample.groovy:37
                   |!> RuntimeException('Hello!') at GqExample.groovy:31
-                  |""".stripMargin()
+                  |""".stripMargin().denormalize()
     }
 
     def "Should restore indentation when an exception is thrown"() {
@@ -138,7 +138,7 @@ class GqTest extends BaseSpecification {
                   |  nested3()
                   |  -> 5
                   |-> 15
-                  |""".stripMargin())
+                  |""".stripMargin().denormalize())
     }
 
     // --- Technical debt
@@ -151,7 +151,6 @@ class GqTest extends BaseSpecification {
     // GrabTest doesn't always grab the latest SNAPSHOT because @Grab ignores the latest SNAPSHOT in .m2. Try @zefifer grape-amaven or try @Grape's changing attribute
 
     // --- Feature
-    // Running acceptance test in Windows will break due to \n in test
     // Adopt @zefifier groovy-decorator
     // When gq file is deleted, gq won't create the file again. This is because of the convert to Writer.
     // @Gq Exception - Print source code context e.g. source code snippets and line numbers
