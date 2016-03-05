@@ -29,9 +29,9 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.*
  */
 class CodeFlowManagers {
 
-    static MethodCallExpression expressionProcessed(Expression expressionInfo) {
+    static MethodCallExpression expressionProcessed(String methodName, Expression... expressionInfos) {
         String method = (SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(expressionInfo))
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(constX(methodName), *expressionInfos))
     }
 
     static MethodCallExpression methodStarted(Expression methodInfo) {

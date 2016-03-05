@@ -27,6 +27,11 @@ class GqSupportExample {
         gq(3 + 5)
     }
 
+    int sum(one, two, three) {
+        gq(one, two, three)
+        return one + two + three
+    }
+
     int nested1(int value) {
         gq(nested2(value))
     }

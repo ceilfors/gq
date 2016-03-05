@@ -44,4 +44,16 @@ class GqSupportTest extends BaseSpecification {
         result == 5
         gqFile.text == ("nested1: nested2(value)=5\n".denormalize())
     }
+
+    def "Should write method call expression statement with multiple arguments in order"() {
+        setup:
+        def example = newExample(GqSupportExample)
+
+        when:
+        def result = example.sum(1, 2, 3)
+
+        then:
+        result == 6
+        gqFile.text == ("sum: one=1, two=2, three=3\n".denormalize())
+    }
 }

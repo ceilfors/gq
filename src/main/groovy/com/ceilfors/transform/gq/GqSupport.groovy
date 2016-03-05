@@ -23,7 +23,13 @@ class GqSupport {
 
     static GqSupport gq = new GqSupport()
 
-    def <T> T call(T value) {
+    /**
+     * Logs expression to gq file.
+     *
+     * @param values the values which expression to be logged to gq file
+     * @return the first value of the parameters to help method chaining
+     */
+    def <T> T call(T... values) {
         throw new IllegalStateException("Can't be called during runtime!")
     }
 }

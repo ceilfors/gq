@@ -56,8 +56,10 @@ class GqSupportTransformation implements ASTTransformation {
             Expression transform(Expression expression) {
                 if (expression instanceof StaticMethodCallExpression && expression.ownerType.name == GqSupport.name) {
                     // Traps normal method call to GqSupport and reroute to CodeFlowListeners
-                    def originalArgs = (expression.arguments as ArgumentListExpression).expressions[0]
-                    return CodeFlowManagers.expressionProcessed(ExpressionInfos.ctor(getSourceUnit(), currentMethodName, originalArgs))
+                    def originalArgs = (expression.arguments as ArgumentListExpression).expressions
+                    return CodeFlowManagers.expressionProcessed(currentMethodName, *originalArgs.collect {
+                        ExpressionInfos.ctor(getSourceUnit(), it)
+                    })
                 }
                 return super.transform(expression)
             }
