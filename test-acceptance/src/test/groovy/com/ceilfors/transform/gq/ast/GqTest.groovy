@@ -156,10 +156,8 @@ class GqTest extends BaseSpecification {
 
         then:
         result == "static!"
-        gqFile.text.endsWith(
-                """compileStatic()
-                  |-> static!
-                  |""".stripMargin().denormalize())
+        gqFile.text.startsWith("compileStatic")
+
     }
 
     def "Should be able to be used in conjunction with CompileStatic class"() {
@@ -177,10 +175,8 @@ class GqTest extends BaseSpecification {
 
         then:
         result == "static!"
-        gqFile.text.endsWith(
-                """compileStatic()
-                  |-> static!
-                  |""".stripMargin().denormalize())
+        gqFile.text.startsWith("compileStatic")
+
     }
 
     // --- Technical debt

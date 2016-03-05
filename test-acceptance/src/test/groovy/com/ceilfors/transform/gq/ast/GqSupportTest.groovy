@@ -56,4 +56,43 @@ class GqSupportTest extends BaseSpecification {
         result == 6
         gqFile.text == ("sum: one=1, two=2, three=3\n".denormalize())
     }
+
+    def "Should be able to be used in conjunction with CompileStatic method"() {
+        when:
+        def result = new GroovyClassLoader().parseClass("""
+            import static com.ceilfors.transform.gq.GqSupport.gq
+
+            class Test {
+
+                @groovy.transform.CompileStatic
+                public String compileStatic() {
+                    return gq("static!")
+                }
+            }
+        """).newInstance().compileStatic()
+
+        then:
+        result == "static!"
+        gqFile.text.startsWith("compileStatic")
+
+    }
+
+    def "Should be able to be used in conjunction with CompileStatic class"() {
+        when:
+        def result = new GroovyClassLoader().parseClass("""
+            import static com.ceilfors.transform.gq.GqSupport.gq
+
+            @groovy.transform.CompileStatic
+            class Test {
+
+                public String compileStatic() {
+                    return gq("static!")
+                }
+            }
+        """).newInstance().compileStatic()
+
+        then:
+        result == "static!"
+        gqFile.text.startsWith("compileStatic")
+    }
 }
