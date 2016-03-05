@@ -16,10 +16,14 @@
 
 package com.ceilfors.transform.gq.ast
 
-import org.codehaus.groovy.ast.*
+import org.codehaus.groovy.ast.ASTNode
+import org.codehaus.groovy.ast.AnnotatedNode
+import org.codehaus.groovy.ast.ClassHelper
+import org.codehaus.groovy.ast.MethodNode
+import org.codehaus.groovy.ast.Parameter
+import org.codehaus.groovy.ast.VariableScope
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.ClosureExpression
-import org.codehaus.groovy.ast.expr.EmptyExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.codehaus.groovy.ast.stmt.Statement
@@ -29,11 +33,11 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 
+import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.declS
 import static org.codehaus.groovy.ast.tools.GeneralUtils.returnS
 import static org.codehaus.groovy.ast.tools.GeneralUtils.stmt
 import static org.codehaus.groovy.ast.tools.GeneralUtils.varX
-
 
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class GqTransformation extends AbstractASTTransformation {
@@ -47,12 +51,12 @@ public class GqTransformation extends AbstractASTTransformation {
             MethodNode methodNode = annotatedNode as MethodNode
 
             def result = varX("result")
-            def exception = varX("e")
+            def exception = varX("e", ClassHelper.make(Throwable))
             boolean voidReturnType = methodNode.returnType == ClassHelper.make(void)
 
             BlockStatement newCode = new BlockStatement([
                     stmt(CodeFlowManagers.methodStarted(MethodInfos.ctor(methodNode))),
-                    declS(result, new EmptyExpression()),
+                    declS(result, constX(null)),
                     tryAndRethrow(
                             callClosureAndKeepResult(wrapInClosure(methodNode), result),
                             stmt(CodeFlowManagers.exceptionThrown(ExceptionInfos.ctor(exception))),

@@ -141,6 +141,48 @@ class GqTest extends BaseSpecification {
                   |""".stripMargin().denormalize())
     }
 
+    def "Should be able to be used in conjunction with CompileStatic method"() {
+        when:
+        def result = new GroovyClassLoader().parseClass("""
+            class Test {
+
+                @com.ceilfors.transform.gq.ast.Gq
+                @groovy.transform.CompileStatic
+                public String compileStatic() {
+                    return "static!"
+                }
+            }
+        """).newInstance().compileStatic()
+
+        then:
+        result == "static!"
+        gqFile.text.endsWith(
+                """compileStatic()
+                  |-> static!
+                  |""".stripMargin().denormalize())
+    }
+
+    def "Should be able to be used in conjunction with CompileStatic class"() {
+        when:
+        def result = new GroovyClassLoader().parseClass("""
+            @groovy.transform.CompileStatic
+            class Test {
+
+                @com.ceilfors.transform.gq.ast.Gq
+                public String compileStatic() {
+                    return "static!"
+                }
+            }
+        """).newInstance().compileStatic()
+
+        then:
+        result == "static!"
+        gqFile.text.endsWith(
+                """compileStatic()
+                  |-> static!
+                  |""".stripMargin().denormalize())
+    }
+
     // --- Technical debt
     // Rename GqTransformation to GqASTTransformation to follow standard
     // Remove ast package as it's a useless layer.
