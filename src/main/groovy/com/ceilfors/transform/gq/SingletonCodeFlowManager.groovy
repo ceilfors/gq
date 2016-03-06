@@ -24,17 +24,12 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
     INSTANCE;
 
     List<CodeFlowListener> codeFlowListeners = [
-            new GqFile(new FileWriter(createGqFile()))
+            new GqFile(createGqFile())
     ]
 
     private File createGqFile() {
         // By default using "/tmp" instead of using java.io.tmpdir for better user usability
-        def gqDir = System.getProperty("GQTMP", "/tmp")
-        def file = new File(gqDir, "gq")
-        if (!file.exists()) {
-            file.createNewFile()
-        }
-        return file
+        return new File(System.getProperty("GQTMP", "/tmp"), "gq")
     }
 
     @Override

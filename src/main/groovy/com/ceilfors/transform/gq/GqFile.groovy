@@ -16,6 +16,7 @@
 
 package com.ceilfors.transform.gq
 
+import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.StackTraceUtils
 
 import static com.ceilfors.transform.gq.StackTraceUtils.*
@@ -29,13 +30,26 @@ class GqFile implements CodeFlowListener {
 
     AutoIndentingPrintWriter writer
 
+    @PackageScope
     GqFile(Writer writer) {
-        this.writer = new AutoIndentingPrintWriter(new BufferedWriter(writer), true)
+        this.writer = new AutoIndentingPrintWriter(writer, true)
+    }
+
+    GqFile(File file) {
+        this(new FileCreatingWriter(file))
+    }
+
+    void print(text) {
+        writer.print(text)
+    }
+
+    void println(text) {
+        writer.println(text)
     }
 
     @Override
     void methodStarted(MethodInfo methodInfo) {
-        writer.println("${methodInfo.name}(${methodInfo.args.join(", ")})")
+        println("${methodInfo.name}(${methodInfo.args.join(", ")})")
         methodCalls.push(methodInfo)
         writer.indentLevel = methodCalls.size()
     }
@@ -44,7 +58,7 @@ class GqFile implements CodeFlowListener {
     void methodEnded(Object result) {
         methodCalls.pop()
         writer.indentLevel = methodCalls.size()
-        writer.println("-> $result")
+        println("-> $result")
     }
 
     @Override
@@ -62,12 +76,12 @@ class GqFile implements CodeFlowListener {
         StackTraceUtils.sanitizeRootCause(exception)
         sanitizeGeneratedCode(exception)
         def trace = exception.stackTrace.find { it.methodName == methodInfo.name }
-        writer.println("!> ${exception.class.simpleName}('${exception.message}') at ${trace.fileName}:${trace.lineNumber}")
+        println("!> ${exception.class.simpleName}('${exception.message}') at ${trace.fileName}:${trace.lineNumber}")
     }
 
     @Override
     Object expressionProcessed(String methodName, ExpressionInfo... expressionInfos) {
-        writer.println("${methodName}: " + expressionInfos.collect { "${it.text}=${it.value}" }.join(', '))
+        println("${methodName}: " + expressionInfos.collect { "${it.text}=${it.value}" }.join(', '))
         return expressionInfos[0].value
     }
 }
