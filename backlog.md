@@ -4,7 +4,9 @@ This file must be moved to github issue tracker once we hit 0.1.0
 
 # Technical debt
 - Rename GqTransformation to GqASTTransformation to follow standard
-- Remove ast package as it's a useless layer.
+- Move @Gq out of ast package.
+- Rename package to com.ceilfors.groovy instead of transform.
+- Remove ast layer in test case
 - This code in GqFile seems to be a responsibility of someone else: writer.indentLevel = methodCalls.size()
 
 # Bug 
@@ -17,5 +19,6 @@ This file must be moved to github issue tracker once we hit 0.1.0
 - @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
 - Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
 - @Gq(vars=true) to print all variable expression
+- Colouring
 - Adopt @zefifier groovy-decorator
 - q.d

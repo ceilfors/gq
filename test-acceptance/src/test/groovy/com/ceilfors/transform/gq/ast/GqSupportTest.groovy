@@ -23,10 +23,14 @@ class GqSupportTest extends BaseSpecification {
 
     def "Should write variable expression statement and the evaluated expression"() {
         setup:
-        def example = newExample(GqSupportExample)
+        def instance = toInstance(wrapMethodInClass("""
+            int "3 plus 5"() {
+                gq(3 + 5)
+            }
+        """))
 
         when:
-        def result = example."3 plus 5"()
+        def result = instance."3 plus 5"()
 
         then:
         result == 8
@@ -35,10 +39,13 @@ class GqSupportTest extends BaseSpecification {
 
     def "Should write method call expression statement and the evaluated expression"() {
         setup:
-        def example = newExample(GqSupportExample)
+        def instance = toInstance(wrapMethodInClass("""
+            int nested1(int value) { gq(nested2(value)) }
+            int nested2(int value) { return value }
+        """))
 
         when:
-        def result = example.nested1(5)
+        def result = instance.nested1(5)
 
         then:
         result == 5
@@ -47,52 +54,18 @@ class GqSupportTest extends BaseSpecification {
 
     def "Should write method call expression statement with multiple arguments in order"() {
         setup:
-        def example = newExample(GqSupportExample)
+        def instance = toInstance(wrapMethodInClass("""
+            int sum(one, two, three) {
+                gq(one, two, three)
+                return one + two + three
+            }
+        """))
 
         when:
-        def result = example.sum(1, 2, 3)
+        def result = instance.sum(1, 2, 3)
 
         then:
         result == 6
         gqFile.text == ("sum: one=1, two=2, three=3\n".denormalize())
-    }
-
-    def "Should be able to be used in conjunction with CompileStatic method"() {
-        when:
-        def result = new GroovyClassLoader().parseClass("""
-            import static com.ceilfors.transform.gq.GqSupport.gq
-
-            class Test {
-
-                @groovy.transform.CompileStatic
-                public String compileStatic() {
-                    return gq("static!")
-                }
-            }
-        """).newInstance().compileStatic()
-
-        then:
-        result == "static!"
-        gqFile.text.startsWith("compileStatic")
-
-    }
-
-    def "Should be able to be used in conjunction with CompileStatic class"() {
-        when:
-        def result = new GroovyClassLoader().parseClass("""
-            import static com.ceilfors.transform.gq.GqSupport.gq
-
-            @groovy.transform.CompileStatic
-            class Test {
-
-                public String compileStatic() {
-                    return gq("static!")
-                }
-            }
-        """).newInstance().compileStatic()
-
-        then:
-        result == "static!"
-        gqFile.text.startsWith("compileStatic")
     }
 }

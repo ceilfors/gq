@@ -20,22 +20,49 @@ class GqTest extends BaseSpecification {
 
     def "Should write the name of a method with empty parameter"() {
         setup:
-        def example = newExample(GqExample)
+        def instance = toInstance(wrapMethodInClass("""
+            @Gq
+            int "return 5"() {
+                5
+            }
+        """))
 
         when:
-        def result = example."return 5"()
+        def result = instance."return 5"()
 
         then:
         result == 5
         gqFile.readLines().first().contains("return 5()")
     }
 
-    def "Should write the arguments of a method call"() {
+    def "Should write the returned value of a method call"() {
         setup:
-        def example = newExample(GqExample)
+        def instance = toInstance(wrapMethodInClass("""
+            @Gq
+            int "return 5"() {
+                5
+            }
+        """))
 
         when:
-        def result = example.add(3, 3)
+        def result = instance."return 5"()
+
+        then:
+        result == 5
+        gqFile.readLines().last().contains("-> 5")
+    }
+
+    def "Should write the arguments of a method call"() {
+        setup:
+        def instance = toInstance(wrapMethodInClass("""
+            @Gq
+            int add(int x, int y) {
+                return x + y
+            }
+        """))
+
+        when:
+        def result = instance.add(3, 3)
 
         then:
         result == 6
@@ -44,39 +71,33 @@ class GqTest extends BaseSpecification {
 
     def "Should be able to write a method when its return type is void"() {
         setup:
-        def example = newExample(GqExample)
+        def instance = toInstance(wrapMethodInClass("""
+            @Gq
+            void "return void"() {}
+        """))
 
         when:
-        example."return void"()
+        instance."return void"()
 
         then:
         gqFile.text == ("return void()\n".denormalize())
     }
 
-
-    def "Should write the returned value of a method call"() {
-        setup:
-        def example = newExample(GqExample)
-
-        when:
-        def result = example."return 5"()
-
-        then:
-        result == 5
-        gqFile.readLines().last().contains("-> 5")
-    }
-
     def "Should write nested method call with indentation"() {
         setup:
-        def example = newExample(GqExample)
+        def instance = toInstance(wrapMethodInClass("""
+            @Gq int nested()          { nested2() + 5 }
+                private int nested2() { nested3() + 5 }
+            @Gq private int nested3() { 5 }
+        """))
 
         when:
-        def result = example.nested1()
+        def result = instance.nested()
 
         then:
         result == 15
         gqFile.text ==
-                """nested1()
+                """nested()
                   |  nested3()
                   |  -> 5
                   |-> 15
@@ -130,52 +151,13 @@ class GqTest extends BaseSpecification {
         thrown(RuntimeException)
 
         when:
-        example.nested1()
+        example.throwException()
 
         then:
+        thrown(RuntimeException)
         gqFile.text.endsWith(
-                """nested1()
-                  |  nested3()
-                  |  -> 5
-                  |-> 15
+                """throwException()
+                  |!> RuntimeException('Hello!') at GqExample.groovy:26
                   |""".stripMargin().denormalize())
-    }
-
-    def "Should be able to be used in conjunction with CompileStatic method"() {
-        when:
-        def result = new GroovyClassLoader().parseClass("""
-            class Test {
-
-                @com.ceilfors.transform.gq.ast.Gq
-                @groovy.transform.CompileStatic
-                public String compileStatic() {
-                    return "static!"
-                }
-            }
-        """).newInstance().compileStatic()
-
-        then:
-        result == "static!"
-        gqFile.text.startsWith("compileStatic")
-
-    }
-
-    def "Should be able to be used in conjunction with CompileStatic class"() {
-        when:
-        def result = new GroovyClassLoader().parseClass("""
-            @groovy.transform.CompileStatic
-            class Test {
-
-                @com.ceilfors.transform.gq.ast.Gq
-                public String compileStatic() {
-                    return "static!"
-                }
-            }
-        """).newInstance().compileStatic()
-
-        then:
-        result == "static!"
-        gqFile.text.startsWith("compileStatic")
-
     }
 }

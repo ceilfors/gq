@@ -21,6 +21,7 @@ import com.ceilfors.transform.gq.SingletonCodeFlowManager
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+
 /**
  * @author ceilfors
  */
@@ -42,6 +43,14 @@ class BaseSpecification extends Specification {
         writer.close()
     }
 
+    /**
+     * Only use this method when it is absolutely necessary. Using this method for test case
+     * will drop test readability. Example of good use case: comparing line numbers
+     * where it is easier to assert when comparing it against IDE.
+     *
+     * @param clasz the class to be instantiated with GroovyClassLoader
+     * @return the object of the example class
+     */
     static <T> T newExample(Class<T> clasz) {
         def file = new File("src/test/groovy/${clasz.package.name.replace('.', '/')}/${clasz.simpleName}.groovy")
         assert file.exists()
@@ -49,5 +58,27 @@ class BaseSpecification extends Specification {
         GroovyClassLoader invoker = new GroovyClassLoader()
         def clazz = invoker.parseClass(file)
         return clazz.newInstance() as T
+    }
+
+    static toInstance(String text) {
+        GroovyClassLoader invoker = new GroovyClassLoader()
+        def clazz = invoker.parseClass(text)
+        return clazz.newInstance()
+    }
+
+    static wrapMethodInClass(String text) {
+        return insertPackageAndImport(
+                """class Test {
+                  |  $text
+                  |}""".stripMargin())
+    }
+
+
+    static insertPackageAndImport(String text) {
+        return """package com.ceilfors.transform.gq.ast
+                 |
+                 |import static com.ceilfors.transform.gq.GqSupport.gq
+                 |
+                 |$text""".stripMargin()
     }
 }
