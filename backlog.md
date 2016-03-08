@@ -12,13 +12,13 @@ This file must be moved to github issue tracker once we hit 0.1.0
 # Bug 
 
 # Feature
-- GqSupport - support multiline text e.g. gc(3+\n\n5) -> Trim the new line. See spock's SourceLookup?
-- GqSupport.gq to support void return type
-- Timestamp on each line for readability
+- 0.1.0 - GqSupport.gq to support void return type
+- 0.1.0 Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
+- 0.1.0 Timestamp on each line for readability
+- 0.1.0 @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
 - @Gq Exception - Print source code context e.g. source code snippets and line numbers
-- @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
-- Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
 - @Gq(vars=true) to print all variable expression
 - Colouring
+- GqSupport - Support removing comments from expression text e.g. // in multiline or /* */ in one liner
 - Adopt @zefifier groovy-decorator
 - q.d

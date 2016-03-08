@@ -81,7 +81,7 @@ class GqFile implements CodeFlowListener {
 
     @Override
     Object expressionProcessed(String methodName, ExpressionInfo... expressionInfos) {
-        println("${methodName}: " + expressionInfos.collect { "${it.text}=${it.value}" }.join(', '))
+        println("${methodName}: " + expressionInfos.collect { "${it.text.replace("\n", "")}=${it.value}" }.join(', '))
         return expressionInfos[0].value
     }
 }

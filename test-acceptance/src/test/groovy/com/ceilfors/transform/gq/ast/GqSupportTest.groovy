@@ -15,7 +15,6 @@
  */
 
 package com.ceilfors.transform.gq.ast
-
 /**
  * @author ceilfors
  */
@@ -35,6 +34,42 @@ class GqSupportTest extends BaseSpecification {
         then:
         result == 8
         gqFile.text == ("3 plus 5: 3 + 5=8\n".denormalize())
+    }
+
+    def "Should convert multi line variable expression to one line"() {
+        setup:
+        def instance = toInstance(wrapMethodInClass(
+                """int test() {
+                  |    return gq(1 +
+                  |         2 +
+                  |         3)
+            }
+        """))
+
+        when:
+        def result = instance.test()
+
+        then:
+        result == 6
+        gqFile.text == ("test: 1 +         2 +         3=6\n".denormalize())
+    }
+
+    def "Should convert multi line method call expression to one line"() {
+        setup:
+        def instance = toInstance(wrapMethodInClass(
+                """int sum(one, two, three) {
+                  |    return gq(one +
+                  |         two +
+                  |         three)
+            }
+        """))
+
+        when:
+        def result = instance.sum(1, 2, 3)
+
+        then:
+        result == 6
+        gqFile.text == ("sum: one +         two +         three=6\n".denormalize())
     }
 
     def "Should write method call expression statement and the evaluated expression"() {
