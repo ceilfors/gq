@@ -13,12 +13,13 @@ This file must be moved to github issue tracker once we hit 0.1.0
 
 # Feature
 - 0.1.0 - GqSupport.gq to support void return type
-- 0.1.0 Support @Gq and GqSupport for groovy scripts e.g. not encapsulated in class
 - 0.1.0 Timestamp on each line for readability
 - 0.1.0 @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
+- 0.1.0 Long expression - Generate temporary file. Handles expression value e.g. gq(<>), @Gq func(<>), @Gq return -> <>
+- 0.1.0 Long expression - Prints ellipsis in the middle
+- 0.1.0 Colouring in console. Ability to turn it off.
 - @Gq Exception - Print source code context e.g. source code snippets and line numbers
 - @Gq(vars=true) to print all variable expression
-- Colouring
 - GqSupport - Support removing comments from expression text e.g. // in multiline or /* */ in one liner
 - Adopt @zefifier groovy-decorator
 - q.d

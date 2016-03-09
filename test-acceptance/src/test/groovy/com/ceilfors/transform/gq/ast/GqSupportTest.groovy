@@ -15,6 +15,9 @@
  */
 
 package com.ceilfors.transform.gq.ast
+
+import groovy.transform.NotYetImplemented
+
 /**
  * @author ceilfors
  */
@@ -102,5 +105,37 @@ class GqSupportTest extends BaseSpecification {
         then:
         result == 6
         gqFile.text == ("sum: one=1, two=2, three=3\n".denormalize())
+    }
+
+    def "Should be able to be used in standalone Groovy script"() {
+        setup:
+        def instance = toInstance(insertPackageAndImport("""
+            gq(1 + 1)
+        """))
+
+        when:
+        instance.main()
+
+        then:
+        gqFile.text ==
+                """run: 1 + 1=2
+                  |""".stripMargin()
+    }
+
+    @NotYetImplemented
+    def "Should be able to gracefully accept void method call expression"() {
+        setup:
+        def instance = toInstance(insertPackageAndImport("""
+            void nothing(args) {}
+            gq(nothing(5))
+        """))
+
+        when:
+        instance.main()
+
+        then:
+        gqFile.text ==
+                """run: nothing(5)
+                  |""".stripMargin()
     }
 }

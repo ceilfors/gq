@@ -160,4 +160,23 @@ class GqTest extends BaseSpecification {
                   |!> RuntimeException('Hello!') at GqExample.groovy:26
                   |""".stripMargin().denormalize())
     }
+
+    def "Should be able to be used in standalone Groovy script"() {
+        setup:
+        def instance = toInstance(insertPackageAndImport("""
+            @Gq
+            def simplyReturn(arg) { arg }
+
+            simplyReturn(5)
+        """))
+
+        when:
+        instance.main()
+
+        then:
+        gqFile.text ==
+                """simplyReturn(5)
+                  |-> 5
+                  |""".stripMargin()
+    }
 }
