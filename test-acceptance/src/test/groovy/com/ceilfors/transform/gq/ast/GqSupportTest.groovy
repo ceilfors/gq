@@ -119,7 +119,7 @@ class GqSupportTest extends BaseSpecification {
         then:
         gqFile.text ==
                 """run: 1 + 1=2
-                  |""".stripMargin()
+                  |""".stripMargin().denormalize()
     }
 
     @NotYetImplemented
@@ -136,6 +136,6 @@ class GqSupportTest extends BaseSpecification {
         then:
         gqFile.text ==
                 """run: nothing(5)
-                  |""".stripMargin()
+                  |""".stripMargin().denormalize()
     }
 }

@@ -177,6 +177,6 @@ class GqTest extends BaseSpecification {
         gqFile.text ==
                 """simplyReturn(5)
                   |-> 5
-                  |""".stripMargin()
+                  |""".stripMargin().denormalize()
     }
 }
