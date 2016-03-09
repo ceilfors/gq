@@ -30,23 +30,19 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.*
 class CodeFlowManagers {
 
     static MethodCallExpression expressionProcessed(String methodName, Expression... expressionInfos) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(constX(methodName), *expressionInfos))
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), "expressionProcessed", args(constX(methodName), *expressionInfos))
     }
 
     static MethodCallExpression methodStarted(Expression methodInfo) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&methodStarted as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(methodInfo))
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), "methodStarted", args(methodInfo))
     }
 
     static MethodCallExpression methodEnded(Expression result) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&methodEnded as MethodClosure).method
         Expression args = result == null ? args(Parameter.EMPTY_ARRAY) : args(result)
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args)
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), "methodEnded", args)
     }
 
     static MethodCallExpression exceptionThrown(Expression exceptionInfo) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&exceptionThrown as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(exceptionInfo))
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), "exceptionThrown", args(exceptionInfo))
     }
 }
