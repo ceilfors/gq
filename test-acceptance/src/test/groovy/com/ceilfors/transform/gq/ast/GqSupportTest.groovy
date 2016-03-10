@@ -15,9 +15,6 @@
  */
 
 package com.ceilfors.transform.gq.ast
-
-import groovy.transform.NotYetImplemented
-
 /**
  * @author ceilfors
  */
@@ -122,7 +119,6 @@ class GqSupportTest extends BaseSpecification {
                   |""".stripMargin().denormalize()
     }
 
-    @NotYetImplemented
     def "Should be able to gracefully accept void method call expression"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
@@ -135,7 +131,7 @@ class GqSupportTest extends BaseSpecification {
 
         then:
         gqFile.text ==
-                """run: nothing(5)
+                """run: nothing(5)=null
                   |""".stripMargin().denormalize()
     }
 }
