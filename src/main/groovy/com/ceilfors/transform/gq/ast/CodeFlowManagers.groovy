@@ -22,6 +22,9 @@ import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.runtime.MethodClosure
 
+import javax.annotation.Nullable
+
+import static com.ceilfors.transform.gq.SingletonCodeFlowManager.INSTANCE
 import static org.codehaus.groovy.ast.tools.GeneralUtils.*
 
 /**
@@ -30,23 +33,26 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.*
 class CodeFlowManagers {
 
     static MethodCallExpression expressionProcessed(String methodName, Expression... expressionInfos) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(constX(methodName), *expressionInfos))
+        newMethodCall(INSTANCE.&expressionProcessed as MethodClosure, args(constX(methodName), *expressionInfos))
     }
 
     static MethodCallExpression methodStarted(Expression methodInfo) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&methodStarted as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(methodInfo))
+        newMethodCall(INSTANCE.&methodStarted as MethodClosure, args(methodInfo))
     }
 
-    static MethodCallExpression methodEnded(Expression result) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&methodEnded as MethodClosure).method
+    static MethodCallExpression methodEnded(@Nullable Expression result) {
         Expression args = result == null ? args(Parameter.EMPTY_ARRAY) : args(result)
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args)
+        newMethodCall(INSTANCE.&methodEnded as MethodClosure, args)
     }
 
     static MethodCallExpression exceptionThrown(Expression exceptionInfo) {
-        String method = (SingletonCodeFlowManager.INSTANCE.&exceptionThrown as MethodClosure).method
-        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), method, args(exceptionInfo))
+        newMethodCall(INSTANCE.&exceptionThrown as MethodClosure, args(exceptionInfo))
+    }
+
+    /**
+     * MethodClosure type is deliberately used for better IDE support e.g. method name refactoring, etc.
+     */
+    private static newMethodCall(MethodClosure methodClosure, Expression arguments) {
+        new MethodCallExpression(propX(classX(SingletonCodeFlowManager), "INSTANCE"), methodClosure.method, arguments)
     }
 }

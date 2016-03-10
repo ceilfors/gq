@@ -20,6 +20,7 @@ sourceSets {
 }
 
 dependencies {
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     provided 'org.codehaus.groovy:groovy-all:2.4.5'
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude group: 'org.codehaus.groovy'
