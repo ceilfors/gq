@@ -28,7 +28,8 @@ class GqFile implements CodeFlowListener {
 
     private Stack<MethodInfo> methodCalls = [] as Set
 
-    AutoIndentingPrintWriter writer
+    private AutoIndentingPrintWriter writer
+    private boolean timestamping
 
     @PackageScope
     GqFile(Writer writer) {
@@ -36,7 +37,12 @@ class GqFile implements CodeFlowListener {
     }
 
     GqFile(File file) {
+        this(file, false)
+    }
+
+    GqFile(File file, boolean timestamping) {
         this(new FileCreatingWriter(file))
+        this.timestamping = timestamping
     }
 
     void print(text) {

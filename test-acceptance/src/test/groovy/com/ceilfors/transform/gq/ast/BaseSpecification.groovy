@@ -31,16 +31,10 @@ class BaseSpecification extends Specification {
     TemporaryFolder temporaryFolder
 
     File gqFile
-    private Writer writer
 
     def setup() {
         gqFile = new File(temporaryFolder.newFolder().absolutePath, "gq")
-        writer = new FileWriter(gqFile)
-        SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [new GqFile(writer)]
-    }
-
-    def cleanup() {
-        writer.close()
+        SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [new GqFile(gqFile)]
     }
 
     /**
