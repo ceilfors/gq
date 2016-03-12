@@ -17,9 +17,6 @@
 package com.ceilfors.transform.gq
 
 import groovy.transform.PackageScope
-import org.codehaus.groovy.runtime.StackTraceUtils
-
-import static com.ceilfors.transform.gq.StackTraceUtils.*
 
 /**
  * @author ceilfors
@@ -82,9 +79,10 @@ class GqFile implements CodeFlowListener {
         writer.indentLevel = methodCalls.size()
 
         Throwable exception = exceptionInfo.exception
-        StackTraceUtils.sanitizeRootCause(exception)
-        sanitizeGeneratedCode(exception)
-        def trace = exception.stackTrace.find { it.methodName == methodInfo.name }
+
+        String decoratedMethodName = 'decorated$' + methodInfo.name
+        def trace = exception.stackTrace.find { it.methodName == decoratedMethodName }
+
         println("!> ${exception.class.simpleName}('${exception.message}') at ${trace.fileName}:${trace.lineNumber}")
     }
 
