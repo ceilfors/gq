@@ -19,8 +19,6 @@ package com.ceilfors.transform.gq
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.StackTraceUtils
 
-import java.time.Clock
-
 import static com.ceilfors.transform.gq.StackTraceUtils.*
 
 /**
@@ -35,7 +33,7 @@ class GqFile implements CodeFlowListener {
     @PackageScope
     GqFile(Writer writer, boolean timestamp) {
         if (timestamp) {
-            writer = new TimestampPrintWriter(writer, Clock.systemUTC())
+            writer = new TimestampPrintWriter(writer, new SystemClock())
         } else {
             writer = new PrintWriter(writer)
         }

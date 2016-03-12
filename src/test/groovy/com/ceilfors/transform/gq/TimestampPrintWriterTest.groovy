@@ -19,8 +19,7 @@ package com.ceilfors.transform.gq
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.Clock
-import java.time.Instant
+
 /**
  * @author ceilfors
  */
@@ -38,17 +37,14 @@ class TimestampPrintWriterTest extends Specification {
     @Unroll
     def "Should add the timestamp #result as a prefix to the printed String"(long milli, String result) {
         setup:
-        clock.instant() >>> [
-                Instant.ofEpochMilli(0),
-                Instant.ofEpochMilli(milli)
-        ]
+        clock.currentMilli >>> [0L, milli]
         def printer = new TimestampPrintWriter(writer, clock)
 
         when:
         printer.print("foo")
 
         then:
-        writer.toString() == "${result} foo"
+        writer.toString() == "${result} foo".toString()
 
         where:
         milli  || result
@@ -62,10 +58,7 @@ class TimestampPrintWriterTest extends Specification {
 
     def "Should indent new lines and not add timestamp to the new lines from parameters"() {
         setup:
-        clock.instant() >>> [
-                Instant.ofEpochMilli(0),
-                Instant.ofEpochMilli(100000)
-        ]
+        clock.currentMilli >>> [0L, 100000L]
         def printer = new TimestampPrintWriter(writer, clock)
 
         when:
@@ -80,7 +73,7 @@ class TimestampPrintWriterTest extends Specification {
 
     def "Should add timestamp on new line"() {
         setup:
-        clock.instant() >> Instant.ofEpochMilli(0)
+        clock.currentMilli >> 0L
         def printer = new TimestampPrintWriter(writer, clock)
 
         when:
@@ -98,7 +91,7 @@ class TimestampPrintWriterTest extends Specification {
 
     def "Should not add a timestamp if there is no newline"() {
         setup:
-        clock.instant() >> Instant.ofEpochMilli(0)
+        clock.currentMilli >> 0L
         def printer = new TimestampPrintWriter(writer, clock)
 
         when:

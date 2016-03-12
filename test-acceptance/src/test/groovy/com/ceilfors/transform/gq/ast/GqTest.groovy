@@ -16,6 +16,8 @@
 
 package com.ceilfors.transform.gq.ast
 
+import groovy.transform.NotYetImplemented
+
 class GqTest extends BaseSpecification {
 
     def "Should write the name of a method with empty parameter"() {
@@ -178,5 +180,28 @@ class GqTest extends BaseSpecification {
                 """simplyReturn(5)
                   |-> 5
                   |""".stripMargin().denormalize()
+    }
+
+    @NotYetImplemented
+    def "Should save long expression value to a separated file"() {
+        setup:
+        def instance = toInstance(wrapMethodInClass("""
+            @Gq
+            int simplyReturn(arg) {
+                return arg
+            }
+        """))
+
+        when:
+        def result = instance.simplyReturn("0" * 100)
+
+        then:
+        def lines = gqFile.text.readLines()
+        def methodLine = lines[0] =~ "simplyReturn('${"0" * 30}\\.\\.\\.${"0" * 30 }' (file://(.*)))"
+        methodLine.matches()
+        new File(methodLine.group(3)).text == "0" * 100
+        def returnLine = lines[1] =~ "-> '${"0" * 30}\\.\\.\\.${"0" * 30 }' (file://(.*))"
+        returnLine.matches()
+        new File(returnLine.group(2)).text == "0" * 100
     }
 }

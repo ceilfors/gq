@@ -16,8 +16,6 @@
 
 package com.ceilfors.transform.gq
 
-import java.time.Clock
-
 /**
  * @author ceilfors
  */
@@ -28,13 +26,13 @@ class TimestampPrintWriter extends PrintWriter {
     private Clock clock
 
     private long currentElapsedMilli() {
-        return clock.instant().toEpochMilli() - startMilli
+        return clock.currentMilli - startMilli
     }
 
     TimestampPrintWriter(Writer out, Clock clock) {
         super(out)
         this.clock = clock
-        this.startMilli = clock.instant().toEpochMilli()
+        this.startMilli = clock.currentMilli
     }
 
     @Override
