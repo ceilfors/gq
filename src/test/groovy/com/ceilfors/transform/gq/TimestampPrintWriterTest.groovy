@@ -16,38 +16,68 @@
 
 package com.ceilfors.transform.gq
 
-import groovy.transform.NotYetImplemented
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import java.time.Clock
+import java.time.Instant
 /**
  * @author ceilfors
  */
 class TimestampPrintWriterTest extends Specification {
 
+    Clock clock
     StringWriter writer
-    TimestampPrintWriter printer
 
     def setup() {
+        clock = Mock(Clock)
         writer = new StringWriter()
-        printer = new TimestampPrintWriter(writer)
     }
 
-    @NotYetImplemented
-    def "Should add a timestamp to every newline"() {
+    @Unroll
+    def "Should add the timestamp #result as a prefix to the printed String"(long milli, String result) {
+        setup:
+        clock.instant() >>> [
+                Instant.ofEpochMilli(0),
+                Instant.ofEpochMilli(milli)
+        ]
+        def printer = new TimestampPrintWriter(writer, clock)
+
         when:
-        printer.println("one")
+        printer.println("foo")
 
         then:
-        writer.toString() == " 0.0s one\n".denormalize()
+        writer.toString() == "${result} foo\n".denormalize()
+
+        where:
+        milli  || result
+        0      || " 0.0s"
+        200    || " 0.2s"
+        2000   || " 2.0s"
+        3333   || " 3.3s"
+        10000  || "10.0s"
+        100000 || "100.0s"
+    }
+
+    def "Should not add timestamp to the new line passed in by the printed String"() {
+        setup:
+        clock.instant() >>> [
+                Instant.ofEpochMilli(0)
+        ]
+        def printer = new TimestampPrintWriter(writer, clock)
 
         when:
-        Thread.sleep(200)
-        printer.println("two")
+        printer.println("foo\nbar\nboo")
 
         then:
-        writer.toString() == " 0.0s one\n 0.2s two\n".denormalize()
+        writer.toString() == " 0.0s foo\nbar\nboo\n".denormalize()
     }
 
     def "Should not add a timestamp if there is no newline"() {
+        setup:
+        clock.instant() >> Instant.ofEpochMilli(0)
+        def printer = new TimestampPrintWriter(writer, clock)
+
         when:
         printer.print('foo')
 

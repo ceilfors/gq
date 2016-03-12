@@ -16,22 +16,32 @@
 
 package com.ceilfors.transform.gq
 
+import java.time.Clock
+
 /**
  * @author ceilfors
  */
 class TimestampPrintWriter extends PrintWriter {
 
     boolean newLine = true
+    private long startMilli
+    private Clock clock
 
-    TimestampPrintWriter(Writer out) {
+    private long currentElapsedMilli() {
+        return clock.instant().toEpochMilli() - startMilli
+    }
+
+    TimestampPrintWriter(Writer out, Clock clock) {
         super(out)
+        this.clock = clock
+        this.startMilli = clock.instant().toEpochMilli()
     }
 
     @Override
     void print(String s) {
         if (newLine) {
             newLine = false
-            super.print(' 0.0s ')
+            super.printf('%4.1fs ', currentElapsedMilli() / 1000)
         }
         super.print(s)
     }
