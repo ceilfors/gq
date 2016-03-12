@@ -68,4 +68,19 @@ class AutoIndentingPrintWriterTest extends Specification {
                   |    barhelloworld
                   |    gq""".stripMargin().denormalize()
     }
+
+    def "Should indent new lines that are coming from the printed String"() {
+        when:
+        printer.indentLevel = 1
+        printer.print('start')
+        printer.println("foo\nbar\nboo")
+        printer.print('end')
+
+        then:
+        writer.toString() ==
+                """  startfoo
+                  |  bar
+                  |  boo
+                  |  end""".stripMargin().denormalize()
+    }
 }

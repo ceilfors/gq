@@ -38,11 +38,12 @@ class AutoIndentingPrintWriter extends PrintWriter {
 
     @Override
     void print(String s) {
+        def currentIndent = indent * indentLevel
         if (newLine) {
-            super.print(indent * indentLevel)
+            super.print(currentIndent)
             newLine = false
         }
-        super.print(s)
+        super.print(s.replaceAll(/(\r\n|\r|\n)/, '$1' + currentIndent))
     }
 
     @Override
