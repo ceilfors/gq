@@ -32,6 +32,6 @@ class FileFormatTest extends BaseSpecification {
         instance.main()
 
         then:
-        gqFile.text ==~ /\s?\d\.\ds run.*\n/.denormalize()
+        gqFile.text ==~ /\s?\d\.\ds run.*\n/
     }
 }
