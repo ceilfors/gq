@@ -13,6 +13,7 @@ This file must be moved to github issue tracker once we hit 0.1.0
 # Bug 
 
 # Feature
+- 0.1.0 Escape characters e.g. \n in expression value
 - 0.1.0 Timestamp on each line for readability
 - 0.1.0 @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
 - 0.1.0 Long expression - Generate temporary file. Handles expression value e.g. gq(<>), @Gq func(<>), @Gq return -> <>

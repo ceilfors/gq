@@ -32,8 +32,8 @@ class AutoIndentingPrintWriter extends PrintWriter {
     int indentLevel = 0
     boolean newLine = true
 
-    AutoIndentingPrintWriter(Writer out, boolean autoFlush) {
-        super(out, autoFlush)
+    AutoIndentingPrintWriter(Writer out) {
+        super(out)
     }
 
     @Override

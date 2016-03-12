@@ -33,7 +33,7 @@ class GqFile implements CodeFlowListener {
 
     @PackageScope
     GqFile(Writer writer) {
-        this.writer = new AutoIndentingPrintWriter(writer, true)
+        this.writer = new AutoIndentingPrintWriter(writer)
     }
 
     GqFile(File file) {
