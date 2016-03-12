@@ -16,7 +16,12 @@
 
 package com.ceilfors.transform.gq.ast
 
+import com.github.yihtserns.groovy.decorator.MethodDecorator
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
+
+import com.ceilfors.transform.gq.ExceptionInfo
+import com.ceilfors.transform.gq.MethodInfo
+import com.ceilfors.transform.gq.SingletonCodeFlowManager
 
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
@@ -26,9 +31,33 @@ import java.lang.annotation.Target
 /**
  * @author ceilfors
  */
+@MethodDecorator({ func ->
+    boolean voidReturnType = func.returnType == void
+
+    return { args ->
+        SingletonCodeFlowManager.INSTANCE.methodStarted(new MethodInfo(func.name, args))
+
+        def result = null
+        try {
+            result = func(args)
+        } catch (Exception e) {
+            SingletonCodeFlowManager.INSTANCE.exceptionThrown(new ExceptionInfo(e))
+
+            throw e
+        }
+
+        if (voidReturnType) {
+            SingletonCodeFlowManager.INSTANCE.methodEnded()
+        } else {
+            SingletonCodeFlowManager.INSTANCE.methodEnded(result)
+        }
+
+        return result
+    }
+})
+@GroovyASTTransformationClass ("com.github.yihtserns.groovy.decorator.DecoratorASTTransformation")
 @Retention (RetentionPolicy.SOURCE)
 @Target ([ElementType.METHOD])
-@GroovyASTTransformationClass ("com.ceilfors.transform.gq.ast.GqTransformation")
 public @interface Gq {
 
 }

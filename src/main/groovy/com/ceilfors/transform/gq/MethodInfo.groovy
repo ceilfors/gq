@@ -25,12 +25,10 @@ import groovy.transform.ToString
 class MethodInfo {
 
     String name
-    List<String> parameters
     List<Object> args
 
-    MethodInfo(String name, List<String> parameters, List<Object> args) {
+    MethodInfo(String name, List<Object> args) {
         this.name = name
-        this.parameters = parameters
         this.args = args
     }
 }
