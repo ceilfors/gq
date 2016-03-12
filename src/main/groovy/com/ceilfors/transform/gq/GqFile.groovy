@@ -17,7 +17,6 @@
 package com.ceilfors.transform.gq
 
 import groovy.transform.PackageScope
-import org.codehaus.groovy.runtime.StackTraceUtils
 
 import java.time.Clock
 
@@ -82,7 +81,6 @@ class GqFile implements CodeFlowListener {
         writer.indentLevel = methodCalls.size()
 
         Throwable exception = exceptionInfo.exception
-        StackTraceUtils.sanitizeRootCause(exception)
 
         String decoratedMethodName = 'decorated$' + methodInfo.name
         def trace = exception.stackTrace.find { it.methodName == decoratedMethodName }
