@@ -24,7 +24,7 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
     INSTANCE;
 
     List<CodeFlowListener> codeFlowListeners = [
-            new GqFile(createGqFile())
+            new GqFile(createGqFile(), true)
     ]
 
     private File createGqFile() {

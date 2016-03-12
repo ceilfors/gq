@@ -41,7 +41,9 @@ class TimestampPrintWriter extends PrintWriter {
     void print(String s) {
         if (newLine) {
             newLine = false
-            super.printf('%4.1fs ', currentElapsedMilli() / 1000)
+            String timestampPrefix = sprintf('%4.1fs ', currentElapsedMilli() / 1000)
+            s = s.replaceAll(/(\r\n|\r|\n)/, '$1' + (' ' * timestampPrefix.length()))
+            super.print(timestampPrefix)
         }
         super.print(s)
     }

@@ -19,6 +19,8 @@ package com.ceilfors.transform.gq
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.StackTraceUtils
 
+import java.time.Clock
+
 import static com.ceilfors.transform.gq.StackTraceUtils.*
 
 /**
@@ -29,10 +31,14 @@ class GqFile implements CodeFlowListener {
     private Stack<MethodInfo> methodCalls = [] as Set
 
     private AutoIndentingPrintWriter writer
-    private boolean timestamping
 
     @PackageScope
-    GqFile(Writer writer) {
+    GqFile(Writer writer, boolean timestamp) {
+        if (timestamp) {
+            writer = new TimestampPrintWriter(writer, Clock.systemUTC())
+        } else {
+            writer = new PrintWriter(writer)
+        }
         this.writer = new AutoIndentingPrintWriter(writer)
     }
 
@@ -40,9 +46,8 @@ class GqFile implements CodeFlowListener {
         this(file, false)
     }
 
-    GqFile(File file, boolean timestamping) {
-        this(new FileCreatingWriter(file))
-        this.timestamping = timestamping
+    GqFile(File file, boolean timestamp) {
+        this(new FileCreatingWriter(file), timestamp)
     }
 
     void print(text) {

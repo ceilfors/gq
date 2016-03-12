@@ -26,6 +26,7 @@ import java.time.Instant
  */
 class TimestampPrintWriterTest extends Specification {
 
+
     Clock clock
     StringWriter writer
 
@@ -44,10 +45,10 @@ class TimestampPrintWriterTest extends Specification {
         def printer = new TimestampPrintWriter(writer, clock)
 
         when:
-        printer.println("foo")
+        printer.print("foo")
 
         then:
-        writer.toString() == "${result} foo\n".denormalize()
+        writer.toString() == "${result} foo"
 
         where:
         milli  || result
@@ -59,18 +60,40 @@ class TimestampPrintWriterTest extends Specification {
         100000 || "100.0s"
     }
 
-    def "Should not add timestamp to the new line passed in by the printed String"() {
+    def "Should indent new lines and not add timestamp to the new lines from parameters"() {
         setup:
         clock.instant() >>> [
-                Instant.ofEpochMilli(0)
+                Instant.ofEpochMilli(0),
+                Instant.ofEpochMilli(100000)
         ]
         def printer = new TimestampPrintWriter(writer, clock)
 
         when:
-        printer.println("foo\nbar\nboo")
+        printer.print("foo\nbar\nboo")
 
         then:
-        writer.toString() == " 0.0s foo\nbar\nboo\n".denormalize()
+        writer.toString() ==
+                """100.0s foo
+                  |       bar
+                  |       boo""".stripMargin().denormalize()
+    }
+
+    def "Should add timestamp on new line"() {
+        setup:
+        clock.instant() >> Instant.ofEpochMilli(0)
+        def printer = new TimestampPrintWriter(writer, clock)
+
+        when:
+        printer.println("foo")
+        printer.print("bar")
+        printer.println()
+        printer.print("boo")
+
+        then:
+        writer.toString() ==
+                """ 0.0s foo
+                  | 0.0s bar
+                  | 0.0s boo""".stripMargin().denormalize()
     }
 
     def "Should not add a timestamp if there is no newline"() {

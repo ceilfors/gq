@@ -18,14 +18,11 @@ package com.ceilfors.transform.gq.ast
 
 import com.ceilfors.transform.gq.GqFile
 import com.ceilfors.transform.gq.SingletonCodeFlowManager
-import groovy.transform.NotYetImplemented
-
 /**
  * @author ceilfors
  */
 class FileFormatTest extends BaseSpecification {
 
-    @NotYetImplemented
     def "Should add timestamp as a prefix when it is enabled"() {
         setup:
         SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [new GqFile(gqFile, true)]
@@ -35,6 +32,6 @@ class FileFormatTest extends BaseSpecification {
         instance.main()
 
         then:
-        gqFile.text == " 0.0s run: 1 + 1=2\n".stripMargin().denormalize()
+        gqFile.text ==~ /\s?\d\.\ds run.*\n/.denormalize()
     }
 }

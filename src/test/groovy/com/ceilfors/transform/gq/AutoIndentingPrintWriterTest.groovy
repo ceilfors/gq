@@ -29,7 +29,7 @@ class AutoIndentingPrintWriterTest extends Specification {
 
     def setup() {
         writer = new StringWriter()
-        printer = new AutoIndentingPrintWriter(writer)
+        printer = new AutoIndentingPrintWriter(new PrintWriter(writer))
     }
 
     @Unroll

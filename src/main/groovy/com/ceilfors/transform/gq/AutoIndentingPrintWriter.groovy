@@ -31,24 +31,26 @@ class AutoIndentingPrintWriter extends PrintWriter {
     String indent = "  "
     int indentLevel = 0
     boolean newLine = true
+    private PrintWriter out
 
-    AutoIndentingPrintWriter(Writer out) {
+    AutoIndentingPrintWriter(PrintWriter out) {
         super(out)
+        this.out = out
     }
 
     @Override
     void print(String s) {
         def currentIndent = indent * indentLevel
         if (newLine) {
-            super.print(currentIndent)
+            out.print(currentIndent)
             newLine = false
         }
-        super.print(s.replaceAll(/(\r\n|\r|\n)/, '$1' + currentIndent))
+        out.print(s.replaceAll(/(\r\n|\r|\n)/, '$1' + currentIndent))
     }
 
     @Override
     void println() {
-        super.println()
+        out.println()
         newLine = true
     }
 }

@@ -4,6 +4,7 @@ This file must be moved to github issue tracker once we hit 0.1.0
 
 # Technical debt
 - Spock multline comparison is not clear. Also it requires denormalize everywhere. Introduce a method to compare multi line.
+- PrintWriter abuse starts to get ugly e.g. need to delegate, write method is not usable even though it's available. Introduce an "Entry" writer concept instead of relying at new line for 'entry'
 - Rename GqTransformation to GqASTTransformation to follow standard
 - Move @Gq out of ast package.
 - Rename package to com.ceilfors.groovy instead of transform.
@@ -14,7 +15,6 @@ This file must be moved to github issue tracker once we hit 0.1.0
 
 # Feature
 - 0.1.0 Escape characters e.g. \n in expression value
-- 0.1.0 Timestamp on each line for readability
 - 0.1.0 @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
 - 0.1.0 Long expression - Generate temporary file. Handles expression value e.g. gq(<>), @Gq func(<>), @Gq return -> <>
 - 0.1.0 Long expression - Prints ellipsis in the middle
