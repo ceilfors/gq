@@ -66,7 +66,7 @@ class AutoIndentingPrintWriterTest extends Specification {
         writer.toString() ==
                 """    foonewline
                   |    barhelloworld
-                  |    gq""".stripMargin().denormalize()
+                  |    gq""".stripMargin()
     }
 
     def "Should indent new lines that are coming from the printed String"() {
@@ -81,6 +81,6 @@ class AutoIndentingPrintWriterTest extends Specification {
                 """  startfoo
                   |  bar
                   |  boo
-                  |  end""".stripMargin().denormalize()
+                  |  end""".stripMargin()
     }
 }

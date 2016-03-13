@@ -20,6 +20,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
+
 /**
  * @author ceilfors
  */
@@ -38,13 +40,13 @@ class GqFileTest extends Specification {
         gqFile.println("one")
 
         then:
-        file.text == "one\n".denormalize()
+        fileContentEquals file, "one\n"
 
         when:
         file.delete()
         gqFile.println("two")
 
         then:
-        file.text == "two\n".denormalize()
+        fileContentEquals file, "two\n"
     }
 }

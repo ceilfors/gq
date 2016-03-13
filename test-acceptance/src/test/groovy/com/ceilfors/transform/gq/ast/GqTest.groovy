@@ -18,6 +18,8 @@ package com.ceilfors.transform.gq.ast
 
 import groovy.transform.NotYetImplemented
 
+import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
+
 class GqTest extends BaseSpecification {
 
     def "Should write the name of a method with empty parameter"() {
@@ -82,7 +84,7 @@ class GqTest extends BaseSpecification {
         instance."return void"()
 
         then:
-        gqFile.text == ("return void()\n".denormalize())
+        fileContentEquals gqFile, "return void()\n"
     }
 
     def "Should write nested method call with indentation"() {
@@ -98,12 +100,12 @@ class GqTest extends BaseSpecification {
 
         then:
         result == 15
-        gqFile.text ==
+        fileContentEquals gqFile,
                 """nested()
                   |  nested3()
                   |  -> 5
                   |-> 15
-                  |""".stripMargin().denormalize()
+                  |""".stripMargin()
     }
 
     def "Should write exception details if an exception is thrown"() {
@@ -116,10 +118,10 @@ class GqTest extends BaseSpecification {
         then:
         RuntimeException e = thrown(RuntimeException)
         e.message == "Hello!"
-        gqFile.text ==
+        fileContentEquals gqFile,
                 """throwException()
                   |!> RuntimeException('Hello!') at GqExample.groovy:26
-                  |""".stripMargin().denormalize()
+                  |""".stripMargin()
     }
 
     def "Should write exception details if an exception is thrown from a nested method"() {
@@ -132,14 +134,14 @@ class GqTest extends BaseSpecification {
         then:
         RuntimeException e = thrown(RuntimeException)
         e.message == "Hello!"
-        gqFile.text ==
+        fileContentEquals gqFile,
                 """nestedThrowException1()
                   |  nestedThrowException2()
                   |    nestedThrowException3()
                   |    !> RuntimeException('Hello!') at GqExample.groovy:43
                   |  !> RuntimeException('Hello!') at GqExample.groovy:37
                   |!> RuntimeException('Hello!') at GqExample.groovy:31
-                  |""".stripMargin().denormalize()
+                  |""".stripMargin()
     }
 
     def "Should restore indentation when an exception is thrown"() {
@@ -151,16 +153,17 @@ class GqTest extends BaseSpecification {
 
         then:
         thrown(RuntimeException)
+        gqFile.delete()
 
         when:
         example.throwException()
 
         then:
         thrown(RuntimeException)
-        gqFile.text.endsWith(
+        fileContentEquals gqFile,
                 """throwException()
                   |!> RuntimeException('Hello!') at GqExample.groovy:26
-                  |""".stripMargin().denormalize())
+                  |""".stripMargin()
     }
 
     def "Should be able to be used in standalone Groovy script"() {
@@ -176,10 +179,10 @@ class GqTest extends BaseSpecification {
         instance.main()
 
         then:
-        gqFile.text ==
+        fileContentEquals gqFile,
                 """simplyReturn(5)
                   |-> 5
-                  |""".stripMargin().denormalize()
+                  |""".stripMargin()
     }
 
     @NotYetImplemented

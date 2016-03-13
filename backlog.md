@@ -3,7 +3,6 @@ This file must be moved to github issue tracker once we hit 0.1.0
 ```
 
 # Technical debt
-- Spock multline comparison is not clear. Also it requires denormalize everywhere. Introduce a method to compare multi line.
 - PrintWriter abuse starts to get ugly e.g. need to delegate, write method is not usable even though it's available. Introduce an "Entry" writer concept instead of relying at new line for 'entry'
 - Rename GqTransformation to GqASTTransformation to follow standard
 - Move @Gq out of ast package.

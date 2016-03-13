@@ -11,4 +11,5 @@ dependencies {
         exclude group: 'org.codehaus.groovy'
     }
     testCompile 'junit:junit:4.12'
+    testCompile project(':spock-helper')
 }

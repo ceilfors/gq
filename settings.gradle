@@ -1,4 +1,5 @@
 rootProject.name = 'gq'
 include 'test-integration-grab'
 include 'test-acceptance'
+include 'spock-helper'
 
