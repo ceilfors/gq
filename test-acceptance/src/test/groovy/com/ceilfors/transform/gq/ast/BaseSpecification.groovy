@@ -20,6 +20,10 @@ import com.ceilfors.transform.gq.GqFile
 import com.ceilfors.transform.gq.SingletonCodeFlowManager
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.spockframework.runtime.ExpressionInfoBuilder
+import org.spockframework.runtime.ExpressionInfoRenderer
+import org.spockframework.runtime.ExpressionInfoValueRenderer
+import org.spockframework.runtime.model.TextPosition
 import spock.lang.Specification
 
 /**
@@ -35,6 +39,43 @@ class BaseSpecification extends Specification {
     def setup() {
         gqFile = new File(temporaryFolder.newFolder().absolutePath, "gq")
         SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [new GqFile(gqFile)]
+    }
+
+    void gqContentEquals(String expectedContent) {
+        // Assign to individual variables to reduce noise in Spock comparison display
+        def actualText = gqFile.text
+        def expectedText = expectedContent.stripMargin().denormalize()
+
+        // TODO: Move to utility class
+        assert actualText == expectedText : {
+            def actualLines = actualText.readLines()
+            def expectedLines = expectedText.readLines()
+
+            def errorMessage
+            if (actualLines.size() != expectedLines.size()) {
+                errorMessage = "Number of lines don't match. Actual lines: [${actualLines.size()}], actual lines: [${expectedLines.size()}]"
+            } else {
+                for (int i = 0; i < actualLines.size(); i++) {
+                    def actualLine = actualLines[i]
+                    def expectedLine = expectedLines[i]
+                    if (!actualLine.equals(expectedLines.get(i))) {
+                        errorMessage = "Line [${i + 1}] is not equal:\n"
+
+                        def lineExpression = new ExpressionInfoBuilder('actualLine == expectedLine', TextPosition.create(1, 1), [actualLine, expectedLine, false]).build()
+                        ExpressionInfoValueRenderer.render(lineExpression)
+                        errorMessage += ExpressionInfoRenderer.render(lineExpression)
+                        break
+                    }
+                }
+            }
+
+            // From Spock org.spockframework.runtime.Condition
+            def fullExpression = new ExpressionInfoBuilder('actualText == expectedText', TextPosition.create(1, 1), [actualText, expectedText, false]).build()
+            ExpressionInfoValueRenderer.render(fullExpression)
+            def spockRenderedValue = ExpressionInfoRenderer.render(fullExpression)
+
+            return "$errorMessage\n\nFull difference:\n${spockRenderedValue}"
+        }()
     }
 
     /**
