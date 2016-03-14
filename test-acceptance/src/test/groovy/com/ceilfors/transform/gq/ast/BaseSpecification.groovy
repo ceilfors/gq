@@ -34,7 +34,7 @@ class BaseSpecification extends Specification {
 
     def setup() {
         gqFile = new File(temporaryFolder.newFolder().absolutePath, "gq")
-        SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [new GqFile(gqFile)]
+        SingletonCodeFlowManager.INSTANCE.codeFlowListener = new GqFile(gqFile)
     }
 
     /**

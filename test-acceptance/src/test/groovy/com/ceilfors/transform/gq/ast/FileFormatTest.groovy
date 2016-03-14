@@ -25,7 +25,7 @@ class FileFormatTest extends BaseSpecification {
 
     def "Should add timestamp as a prefix when it is enabled"() {
         setup:
-        SingletonCodeFlowManager.INSTANCE.codeFlowListeners = [new GqFile(gqFile, true)]
+        SingletonCodeFlowManager.INSTANCE.codeFlowListener = new GqFile(gqFile, true)
         def instance = toInstance(insertPackageAndImport("gq(1 + 1)"))
 
         when:

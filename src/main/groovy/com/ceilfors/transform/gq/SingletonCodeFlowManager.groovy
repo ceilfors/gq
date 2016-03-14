@@ -23,9 +23,7 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
 
     INSTANCE;
 
-    List<CodeFlowListener> codeFlowListeners = [
-            new GqFile(createGqFile(), true)
-    ]
+    CodeFlowListener codeFlowListener = new GqFile(createGqFile(), true)
 
     private File createGqFile() {
         // By default using "/tmp" instead of using java.io.tmpdir for better user usability
@@ -34,27 +32,26 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
 
     @Override
     void methodStarted(MethodInfo methodInfo) {
-        codeFlowListeners*.methodStarted(methodInfo)
+        codeFlowListener.methodStarted(methodInfo)
     }
 
     @Override
     void methodEnded(Object result) {
-        codeFlowListeners*.methodEnded(result)
+        codeFlowListener.methodEnded(result)
     }
 
     @Override
     void methodEnded() {
-        codeFlowListeners*.methodEnded()
+        codeFlowListener.methodEnded()
     }
 
     @Override
     void exceptionThrown(ExceptionInfo exceptionInfo) {
-        codeFlowListeners*.exceptionThrown(exceptionInfo)
+        codeFlowListener.exceptionThrown(exceptionInfo)
     }
 
     @Override
     Object expressionProcessed(String methodName, ExpressionInfo... expressionInfos) {
-        codeFlowListeners*.expressionProcessed(methodName, expressionInfos)
-        return expressionInfos[0].value
+        codeFlowListener.expressionProcessed(methodName, expressionInfos)
     }
 }
