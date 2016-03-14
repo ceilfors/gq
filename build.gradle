@@ -29,5 +29,3 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile project(':spock-helper')
 }
-
-build.dependsOn install
