@@ -16,11 +16,7 @@
 
 package com.ceilfors.groovy.spock
 
-import org.spockframework.runtime.ExpressionInfoBuilder
-import org.spockframework.runtime.ExpressionInfoRenderer
-import org.spockframework.runtime.ExpressionInfoValueRenderer
-import org.spockframework.runtime.model.TextPosition
-
+import org.spockframework.runtime.Condition
 /**
  * @author ceilfors
  */
@@ -66,12 +62,7 @@ class FileComparisonHelper {
         throw new IllegalStateException('Could not find difference in text file!')
     }
 
-    /**
-     * From Spock org.spockframework.runtime.Condition.
-     */
     private static String getSpockStyleComparison(String text, String value1, String value2) {
-        def fullExpression = new ExpressionInfoBuilder(text, TextPosition.create(1, 1), [value1, value2, false]).build()
-        ExpressionInfoValueRenderer.render(fullExpression)
-        return ExpressionInfoRenderer.render(fullExpression)
+        return new Condition([value1, value2, false], text, null, null).getRendering()
     }
 }
