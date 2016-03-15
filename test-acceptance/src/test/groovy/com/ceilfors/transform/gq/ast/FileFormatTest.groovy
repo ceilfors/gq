@@ -18,20 +18,43 @@ package com.ceilfors.transform.gq.ast
 
 import com.ceilfors.transform.gq.GqFile
 import com.ceilfors.transform.gq.SingletonCodeFlowManager
+import spock.lang.Requires
+
 /**
  * @author ceilfors
  */
 class FileFormatTest extends BaseSpecification {
 
-    def "Should add timestamp as a prefix when it is enabled"() {
-        setup:
-        SingletonCodeFlowManager.INSTANCE.codeFlowListener = new GqFile(gqFile, true)
-        def instance = toInstance(insertPackageAndImport("gq(1 + 1)"))
+    def instance
 
+    def setup() {
+        SingletonCodeFlowManager.INSTANCE.codeFlowListener = new GqFile(gqFile, true)
+        instance = toInstance(insertPackageAndImport("gq(1 + 1)"))
+    }
+
+    def "Should add timestamp as a prefix when it is enabled"() {
         when:
         instance.main()
 
         then:
         gqFile.text ==~ /\s?\d\.\ds run.*\s+/
+    }
+
+    @Requires({ os.windows })
+    def "Should use Windows new line character"() {
+        when:
+        instance.main()
+
+        then:
+        gqFile.text.endsWith('\r\n')
+    }
+
+    @Requires({ os.linux || os.macOs })
+    def "Should use Linux new line character"() {
+        when:
+        instance.main()
+
+        then:
+        gqFile.text.endsWith('\n')
     }
 }
