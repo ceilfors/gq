@@ -16,8 +16,9 @@
 
 package com.ceilfors.transform.gq.ast
 
-import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
+import groovy.transform.NotYetImplemented
 
+import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
 /**
  * @author ceilfors
  */
@@ -136,5 +137,29 @@ class GqSupportTest extends BaseSpecification {
         fileContentEquals gqFile,
                 """run: nothing(5)=null
                   |""".stripMargin()
+    }
+
+    @NotYetImplemented
+    def "Should be able to use OR operator"() {
+        setup:
+        def instance = toInstance(insertPackageAndImport("gq | 'text'"))
+
+        when:
+        instance.main()
+
+        then:
+        fileContentEquals gqFile, "run: 'text'='text'\n"
+    }
+
+    @NotYetImplemented
+    def "Should be able to use DIV operator"() {
+        setup:
+        def instance = toInstance(insertPackageAndImport("gq / 'text'"))
+
+        when:
+        instance.main()
+
+        then:
+        fileContentEquals gqFile, "run: 'text'='text'\n"
     }
 }
