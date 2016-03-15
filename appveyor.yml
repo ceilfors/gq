@@ -1,0 +1,27 @@
+cache:
+  - '%HOMEDRIVE%%HOMEPATH%\.gradle\caches'
+  - '%HOMEDRIVE%%HOMEPATH%\.gradle\wrapper\dists'
+
+build_script:
+  - gradlew assemble
+
+test_script:
+  - gradlew check
+
+after_test:
+  - ps: |
+      $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
+      $file = '.\test-acceptance\build\test-results\TEST-com.ceilfors.transform.gq.ast.FileFormatTest.xml'
+      (New-Object 'System.Net.WebClient').UploadFile($url, (Resolve-Path $file))
+  - ps: |
+      $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
+      $file = '.\test-acceptance\build\test-results\TEST-com.ceilfors.transform.gq.ast.CompileStaticTest.xml'
+      (New-Object 'System.Net.WebClient').UploadFile($url, (Resolve-Path $file))
+  - ps: |
+      $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
+      $file = '.\test-acceptance\build\test-results\TEST-com.ceilfors.transform.gq.ast.GqSupportTest.xml'
+      (New-Object 'System.Net.WebClient').UploadFile($url, (Resolve-Path $file))
+  - ps: |
+        $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
+        $file = '.\test-acceptance\build\test-results\TEST-com.ceilfors.transform.gq.ast.GqTest.xml'
+        (New-Object 'System.Net.WebClient').UploadFile($url, (Resolve-Path $file))
