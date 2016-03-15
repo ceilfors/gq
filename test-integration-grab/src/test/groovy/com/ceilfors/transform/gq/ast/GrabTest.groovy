@@ -54,6 +54,6 @@ class GrabTest {
 
         test.highFive()
 
-        assert gqFile.text ==~ ".*highFive: 2 \\+ 3=5\n"
+        assert gqFile.text ==~ ".*highFive: 2 \\+ 3=5\\s+"
     }
 }
