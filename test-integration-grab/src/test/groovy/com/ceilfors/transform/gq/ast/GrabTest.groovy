@@ -16,6 +16,7 @@
 
 package com.ceilfors.transform.gq.ast
 
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -28,13 +29,21 @@ class GrabTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
+    File gqFile
+
+    @Before
+    public void setup() {
+        System.setProperty('grape.config', this.class.getResource('m2grapeConfig.xml').toString())
+
+        def directory = temporaryFolder.newFolder().absolutePath
+        System.setProperty('GQTMP', directory)
+        System.setProperty('grape.root', directory)
+
+        gqFile = new File(directory, 'gq')
+    }
+
     @Test
     public void "Should be able to use gq with Grab"() {
-        def directory = temporaryFolder.newFolder().absolutePath
-        System.setProperty("GQTMP", directory)
-        def gqFile = new File(directory, "gq")
-        System.setProperty("grape.root", directory)
-
         String artifactVersion = System.getProperty('gqVersion')
         String artifactGroup = System.getProperty('gqGroup')
         String artifactModule = System.getProperty('gqName')
