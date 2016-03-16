@@ -16,12 +16,10 @@
 
 package com.ceilfors.transform.gq.ast
 
-import com.ceilfors.transform.gq.GqFile
 import com.ceilfors.transform.gq.SingletonCodeFlowManager
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
-
 /**
  * @author ceilfors
  */
@@ -34,7 +32,7 @@ class BaseSpecification extends Specification {
 
     def setup() {
         gqFile = new File(temporaryFolder.newFolder().absolutePath, "gq")
-        SingletonCodeFlowManager.INSTANCE.codeFlowListener = new GqFile(gqFile)
+        SingletonCodeFlowManager.INSTANCE.setGqFile(gqFile, false)
     }
 
     /**

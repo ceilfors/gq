@@ -19,15 +19,14 @@ package com.ceilfors.transform.gq
 /**
  * @author ceilfors
  */
-class ExpressionInfo {
+class SimpleSyntaxConverter implements SyntaxConverter {
 
-    String methodName
-    String text
-    Object value
-
-    ExpressionInfo(String methodName, String text, Object value) {
-        this.methodName = methodName
-        this.text = text
-        this.value = value
+    @Override
+    Object convertExpressionValue(Object expression) {
+        if (expression instanceof String) {
+            return "'$expression'"
+        } else {
+            return expression
+        }
     }
 }

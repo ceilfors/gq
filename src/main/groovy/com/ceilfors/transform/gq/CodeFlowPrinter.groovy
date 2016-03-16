@@ -19,15 +19,17 @@ package com.ceilfors.transform.gq
 /**
  * @author ceilfors
  */
-class ExpressionInfo {
+interface CodeFlowPrinter {
 
-    String methodName
-    String text
-    Object value
+    void printMethodStart(MethodInfo methodInfo)
 
-    ExpressionInfo(String methodName, String text, Object value) {
-        this.methodName = methodName
-        this.text = text
-        this.value = value
-    }
+    void printMethodEnd()
+
+    void printMethodEnd(Object result)
+
+    void printExpression(ExpressionInfo expressionInfo)
+
+    void print(String string)
+
+    void printException(ExceptionInfo exceptionInfo)
 }

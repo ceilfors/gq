@@ -21,9 +21,11 @@ package com.ceilfors.transform.gq
  */
 class ExceptionInfo {
 
+    String methodName
     Throwable exception
 
-    ExceptionInfo(Throwable exception) {
+    ExceptionInfo(String methodName, Throwable exception) {
+        this.methodName = methodName
         this.exception = exception
     }
 }

@@ -19,15 +19,7 @@ package com.ceilfors.transform.gq
 /**
  * @author ceilfors
  */
-class ExpressionInfo {
+interface SyntaxConverter {
 
-    String methodName
-    String text
-    Object value
-
-    ExpressionInfo(String methodName, String text, Object value) {
-        this.methodName = methodName
-        this.text = text
-        this.value = value
-    }
+    Object convertExpressionValue(Object expression)
 }

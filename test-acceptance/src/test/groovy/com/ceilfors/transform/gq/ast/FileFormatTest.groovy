@@ -16,10 +16,8 @@
 
 package com.ceilfors.transform.gq.ast
 
-import com.ceilfors.transform.gq.GqFile
 import com.ceilfors.transform.gq.SingletonCodeFlowManager
 import spock.lang.Requires
-
 /**
  * @author ceilfors
  */
@@ -28,7 +26,7 @@ class FileFormatTest extends BaseSpecification {
     def instance
 
     def setup() {
-        SingletonCodeFlowManager.INSTANCE.codeFlowListener = new GqFile(gqFile, true)
+        SingletonCodeFlowManager.INSTANCE.setGqFile(gqFile, true)
         instance = toInstance(insertPackageAndImport("gq(1 + 1)"))
     }
 
