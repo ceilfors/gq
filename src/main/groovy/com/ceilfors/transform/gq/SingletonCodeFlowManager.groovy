@@ -23,11 +23,16 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
 
     INSTANCE;
 
+    /**
+     * Configure the temporary directory that gq should use. It goes to /tmp by default.
+     */
+    public static final String GQ_TMP = "gq.tmp"
+
     private CodeFlowPrinter codeFlowPrinter
 
     private File createGqFile() {
         // By default using "/tmp" instead of using java.io.tmpdir for better user usability
-        return new File(System.getProperty("GQTMP", "/tmp"), "gq")
+        return new File(System.getProperty(GQ_TMP, "/tmp"), "gq")
     }
 
     def setGqFile(File file, boolean timestamp) {
