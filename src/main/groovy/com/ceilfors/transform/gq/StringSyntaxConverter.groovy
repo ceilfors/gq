@@ -19,7 +19,7 @@ package com.ceilfors.transform.gq
 /**
  * @author ceilfors
  */
-class SimpleSyntaxConverter implements SyntaxConverter {
+class StringSyntaxConverter implements SyntaxConverter {
 
     @Override
     Object convertExpressionValue(Object expression) {
