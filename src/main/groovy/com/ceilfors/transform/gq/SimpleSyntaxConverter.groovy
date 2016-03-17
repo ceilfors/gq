@@ -23,7 +23,7 @@ class SimpleSyntaxConverter implements SyntaxConverter {
 
     @Override
     Object convertExpressionValue(Object expression) {
-        if (expression instanceof String) {
+        if (expression instanceof CharSequence) {
             return "'$expression'"
         } else {
             return expression
