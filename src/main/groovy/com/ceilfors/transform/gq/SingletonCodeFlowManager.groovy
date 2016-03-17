@@ -70,8 +70,8 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
     }
 
     @Override
-    Object expressionProcessed(String methodName, ExpressionInfo... expressionInfos) {
-        codeFlowPrinter.printExpression(expressionInfos[0])
-        return expressionInfos[0].value
+    Object expressionProcessed(String methodName, ExpressionInfo expressionInfo) {
+        codeFlowPrinter.printExpression(expressionInfo)
+        return expressionInfo.value
     }
 }

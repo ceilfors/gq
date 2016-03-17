@@ -26,10 +26,10 @@ class GqSupport {
     /**
      * Logs expression to gq file.
      *
-     * @param values the values which expression to be logged to gq file
-     * @return the first value of the parameters to help method chaining
+     * @param value which expression is to be logged to gq file
+     * @return the original value of the expression to help method chaining
      */
-    def <T> T call(T... values) {
+    def <T> T call(T value) {
         throw new IllegalStateException("Can't be called during runtime!")
     }
 }

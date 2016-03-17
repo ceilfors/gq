@@ -91,24 +91,6 @@ class GqSupportTest extends BaseSpecification {
         fileContentEquals gqFile, "nested1: nested2(value)=5\n"
     }
 
-    @NotYetImplemented
-    def "Should write method call expression statement with multiple arguments in order"() {
-        setup:
-        def instance = toInstance(wrapMethodInClass("""
-            int sum(one, two, three) {
-                gq(one, two, three)
-                return one + two + three
-            }
-        """))
-
-        when:
-        def result = instance.sum(1, 2, 3)
-
-        then:
-        result == 6
-        fileContentEquals gqFile, "sum: one=1, two=2, three=3\n"
-    }
-
     def "Should be able to be used in standalone Groovy script"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""

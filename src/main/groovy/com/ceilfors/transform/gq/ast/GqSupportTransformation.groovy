@@ -67,10 +67,8 @@ class GqSupportTransformation implements ASTTransformation {
             Expression transform(Expression expression) {
                 if (expression instanceof StaticMethodCallExpression && expression.ownerType.name == GqSupport.name) {
                     // Traps normal method call to GqSupport and reroute to CodeFlowListeners
-                    def originalArgs = (expression.arguments as ArgumentListExpression).expressions
-                    return callExpressionProcessed(currentMethodName, *originalArgs.collect {
-                        newExpressionInfo(getSourceUnit(), currentMethodName, it)
-                    })
+                    def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
+                    return callExpressionProcessed(currentMethodName, newExpressionInfo(getSourceUnit(), currentMethodName, originalArg))
                 }
                 return super.transform(expression)
             }
@@ -81,14 +79,14 @@ class GqSupportTransformation implements ASTTransformation {
         }
     }
 
-    private static MethodCallExpression callExpressionProcessed(String methodName, Expression... expressionInfos) {
+    private static MethodCallExpression callExpressionProcessed(String methodName, Expression expressionInfo) {
         // MethodClosure type is deliberately used for better IDE support e.g. method name refactoring, etc.
         def methodClosure = SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure
 
         return new MethodCallExpression(
             propX(classX(SingletonCodeFlowManager), "INSTANCE"),
             methodClosure.method,
-            args(constX(methodName), *expressionInfos))
+            args(constX(methodName), expressionInfo))
     }
 
     private static ConstructorCallExpression newExpressionInfo(SourceUnit sourceUnit, String methodName, Expression x) {
