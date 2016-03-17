@@ -25,6 +25,12 @@ class TimestampCodeFlowPrinter implements CodeFlowPrinter {
     private long startMilli
     private Clock clock
 
+    public static interface Clock {
+
+        long getCurrentMilli()
+    }
+
+
     private long currentElapsedMilli() {
         return clock.currentMilli - startMilli
     }
