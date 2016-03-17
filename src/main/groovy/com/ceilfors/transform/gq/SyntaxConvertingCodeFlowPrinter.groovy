@@ -31,14 +31,9 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
 
     @Override
     void printMethodStart(MethodInfo methodInfo) {
-        out.print("${methodInfo.name}")
+        out.print(methodInfo.name)
         out.print('(')
-        methodInfo.args.eachWithIndex { Object arg, i ->
-            if (i != 0) {
-                out.print(', ')
-            }
-            out.print(syntaxConverter.convertExpressionValue(arg))
-        }
+        out.print(methodInfo.args.collect { syntaxConverter.convertExpressionValue(it) }.join(', '))
         out.println(')')
     }
 
