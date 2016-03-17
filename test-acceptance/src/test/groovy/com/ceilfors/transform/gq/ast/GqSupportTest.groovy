@@ -91,6 +91,7 @@ class GqSupportTest extends BaseSpecification {
         fileContentEquals gqFile, "nested1: nested2(value)=5\n"
     }
 
+    @NotYetImplemented
     def "Should write method call expression statement with multiple arguments in order"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""

@@ -36,7 +36,7 @@ class GrabTest {
         System.setProperty('grape.config', this.class.getResource('m2grapeConfig.xml').toString())
 
         def directory = temporaryFolder.newFolder().absolutePath
-        System.setProperty('GQTMP', directory)
+        System.setProperty('gq.tmp', directory)
         System.setProperty('grape.root', directory)
 
         gqFile = new File(directory, 'gq')

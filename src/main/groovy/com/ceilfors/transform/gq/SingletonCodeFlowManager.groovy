@@ -23,35 +23,55 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
 
     INSTANCE;
 
-    CodeFlowListener codeFlowListener = new GqFile(createGqFile(), true)
+    /**
+     * Configure the temporary directory that gq should use. It goes to /tmp by default.
+     */
+    public static final String GQ_TMP = "gq.tmp"
+
+    private CodeFlowPrinter codeFlowPrinter
 
     private File createGqFile() {
         // By default using "/tmp" instead of using java.io.tmpdir for better user usability
-        return new File(System.getProperty("GQTMP", "/tmp"), "gq")
+        return new File(System.getProperty(GQ_TMP, "/tmp"), "gq")
+    }
+
+    def setGqFile(File file, boolean timestamp) {
+        codeFlowPrinter = new IndentingCodeFlowPrinter(new SyntaxConvertingCodeFlowPrinter(
+                new SimpleSyntaxConverter(),
+                new PrintWriter(new FileCreatingWriter(file)))
+        )
+        if (timestamp) {
+            codeFlowPrinter = new TimestampCodeFlowPrinter(codeFlowPrinter, System.&currentTimeMillis)
+        }
+    }
+
+    {
+        setGqFile(createGqFile(), true)
     }
 
     @Override
     void methodStarted(MethodInfo methodInfo) {
-        codeFlowListener.methodStarted(methodInfo)
+        codeFlowPrinter.printMethodStart(methodInfo)
     }
 
     @Override
     void methodEnded(Object result) {
-        codeFlowListener.methodEnded(result)
+        codeFlowPrinter.printMethodEnd(result)
     }
 
     @Override
     void methodEnded() {
-        codeFlowListener.methodEnded()
+        codeFlowPrinter.printMethodEnd()
     }
 
     @Override
     void exceptionThrown(ExceptionInfo exceptionInfo) {
-        codeFlowListener.exceptionThrown(exceptionInfo)
+        codeFlowPrinter.printException(exceptionInfo)
     }
 
     @Override
     Object expressionProcessed(String methodName, ExpressionInfo... expressionInfos) {
-        codeFlowListener.expressionProcessed(methodName, expressionInfos)
+        codeFlowPrinter.printExpression(expressionInfos[0])
+        return expressionInfos[0].value
     }
 }

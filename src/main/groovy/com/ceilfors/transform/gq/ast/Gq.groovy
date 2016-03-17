@@ -41,7 +41,7 @@ import java.lang.annotation.Target
         try {
             result = func(args)
         } catch (Exception e) {
-            SingletonCodeFlowManager.INSTANCE.exceptionThrown(new ExceptionInfo(e))
+            SingletonCodeFlowManager.INSTANCE.exceptionThrown(new ExceptionInfo(func.name, e))
 
             throw e
         }

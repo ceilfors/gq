@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq;
+package com.ceilfors.transform.gq
 
 /**
  * @author ceilfors
  */
-public interface Clock {
+interface CodeFlowPrinter {
 
-    long getCurrentMilli()
+    void printMethodStart(MethodInfo methodInfo)
+
+    void printMethodEnd()
+
+    void printMethodEnd(Object result)
+
+    void printExpression(ExpressionInfo expressionInfo)
+
+    void print(String string)
+
+    void printException(ExceptionInfo exceptionInfo)
 }

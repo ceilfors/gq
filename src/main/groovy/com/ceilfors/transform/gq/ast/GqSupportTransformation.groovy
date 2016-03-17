@@ -69,7 +69,7 @@ class GqSupportTransformation implements ASTTransformation {
                     // Traps normal method call to GqSupport and reroute to CodeFlowListeners
                     def originalArgs = (expression.arguments as ArgumentListExpression).expressions
                     return callExpressionProcessed(currentMethodName, *originalArgs.collect {
-                        newExpressionInfo(getSourceUnit(), it)
+                        newExpressionInfo(getSourceUnit(), currentMethodName, it)
                     })
                 }
                 return super.transform(expression)
@@ -91,9 +91,9 @@ class GqSupportTransformation implements ASTTransformation {
             args(constX(methodName), *expressionInfos))
     }
 
-    private static ConstructorCallExpression newExpressionInfo(SourceUnit sourceUnit, Expression x) {
+    private static ConstructorCallExpression newExpressionInfo(SourceUnit sourceUnit, String methodName, Expression x) {
         def text = lookup(sourceUnit, x)
-        new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(text), x))
+        new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
     }
 
     private static String lookup(SourceUnit sourceUnit, ASTNode node) {
