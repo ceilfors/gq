@@ -16,6 +16,8 @@
 
 package com.ceilfors.transform.gq
 
+import groovy.json.StringEscapeUtils
+
 /**
  * @author ceilfors
  */
@@ -24,7 +26,7 @@ class StringSyntaxConverter implements SyntaxConverter {
     @Override
     Object convertExpressionValue(Object expression) {
         if (expression instanceof CharSequence) {
-            return "'$expression'"
+            return "'${StringEscapeUtils.escapeJava(expression.toString())}'"
         } else {
             return expression
         }

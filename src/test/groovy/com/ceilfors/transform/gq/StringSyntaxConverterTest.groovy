@@ -35,4 +35,17 @@ class StringSyntaxConverterTest extends Specification {
         "foo${'boo'}bar" || "'fooboobar'"
         "foo"            || "'foo'"
     }
+
+    def "Should escape new lines character"() {
+        when:
+        def convertedExpression = new StringSyntaxConverter().convertExpressionValue(expression)
+
+        then:
+        convertedExpression == result
+
+        where:
+        expression      || result
+        "foo\nbar"      || "'foo\\nbar'"
+        "foo\nbar\nboo" || "'foo\\nbar\\nboo'"
+    }
 }
