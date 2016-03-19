@@ -17,15 +17,14 @@
 package com.ceilfors.transform.gq
 
 import spock.lang.Specification
-
 /**
  * @author ceilfors
  */
-class StringSyntaxConverterTest extends Specification {
+class ToStringSyntaxConverterTest extends Specification {
 
     def "Should enclose in quotes"() {
         when:
-        def convertedExpression = new StringSyntaxConverter().convertExpressionValue(expression)
+        def convertedExpression = new ToStringSyntaxConverter().convertExpressionValue(expression)
 
         then:
         convertedExpression == result
@@ -38,7 +37,7 @@ class StringSyntaxConverterTest extends Specification {
 
     def "Should escape new lines character"() {
         when:
-        def convertedExpression = new StringSyntaxConverter().convertExpressionValue(expression)
+        def convertedExpression = new ToStringSyntaxConverter().convertExpressionValue(expression)
 
         then:
         convertedExpression == result

@@ -16,19 +16,16 @@
 
 package com.ceilfors.transform.gq
 
-import groovy.json.StringEscapeUtils
-
 /**
  * @author ceilfors
  */
-class StringSyntaxConverter implements SyntaxConverter {
+class ToStringSyntaxConverter implements SyntaxConverter<Object, String> {
 
     @Override
-    Object convertExpressionValue(Object expression) {
+    String convertExpressionValue(Object expression) {
         if (expression instanceof CharSequence) {
-            return "'${StringEscapeUtils.escapeJava(expression.toString())}'"
-        } else {
-            return expression
+            expression = expression.toString()
         }
+        return expression.inspect()
     }
 }

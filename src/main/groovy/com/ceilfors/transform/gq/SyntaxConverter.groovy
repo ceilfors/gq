@@ -19,7 +19,7 @@ package com.ceilfors.transform.gq
 /**
  * @author ceilfors
  */
-interface SyntaxConverter {
+interface SyntaxConverter<I, O extends String> {
 
-    Object convertExpressionValue(Object expression)
+    O convertExpressionValue(I expression)
 }
