@@ -26,7 +26,7 @@ class FileFormatTest extends BaseSpecification {
     def instance
 
     def setup() {
-        SingletonCodeFlowManager.INSTANCE.setGqFile(gqFile, true)
+        SingletonCodeFlowManager.INSTANCE.init(SingletonCodeFlowManager.INSTANCE.gqFile.parentFile, true)
         instance = toInstance(insertPackageAndImport("gq(1 + 1)"))
     }
 

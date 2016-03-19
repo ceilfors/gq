@@ -28,11 +28,13 @@ class BaseSpecification extends Specification {
     @Rule
     TemporaryFolder temporaryFolder
 
-    File gqFile
-
     def setup() {
-        gqFile = new File(temporaryFolder.newFolder().absolutePath, "gq")
-        SingletonCodeFlowManager.INSTANCE.setGqFile(gqFile, false)
+        File gqDir = temporaryFolder.newFolder()
+        SingletonCodeFlowManager.INSTANCE.init(gqDir, false)
+    }
+
+    File getGqFile() {
+        SingletonCodeFlowManager.INSTANCE.gqFile
     }
 
     /**
