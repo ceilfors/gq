@@ -16,8 +16,6 @@
 
 package com.ceilfors.transform.gq.ast
 
-import groovy.transform.NotYetImplemented
-
 import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
 
 class GqTest extends BaseSpecification {
@@ -185,26 +183,32 @@ class GqTest extends BaseSpecification {
                   |""".stripMargin()
     }
 
-    @NotYetImplemented
-    def "Should save long expression value to a separated file"() {
+    def "Should shorten long expression and save the original expression to a temporary file"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
             @Gq
-            int simplyReturn(arg) {
+            String simplyReturn(arg) {
                 return arg
             }
         """))
+        String args = "0" * 100
 
         when:
-        def result = instance.simplyReturn("0" * 100)
+        instance.simplyReturn(args)
 
         then:
         def lines = gqFile.text.readLines()
-        def methodLine = lines[0] =~ "simplyReturn('${"0" * 30}\\.\\.\\.${"0" * 30 }' (file://(.*)))"
-        methodLine.matches()
-        new File(methodLine.group(3)).text == "0" * 100
-        def returnLine = lines[1] =~ "-> '${"0" * 30}\\.\\.\\.${"0" * 30 }' (file://(.*))"
-        returnLine.matches()
-        new File(returnLine.group(2)).text == "0" * 100
+        def methodLine = lines[0] =~ "simplyReturn\\('(0+\\.\\.0+)' \\(file://(.*)\\)\\)"
+        if (!methodLine.matches()) {
+            throw new AssertionError("Matcher [${methodLine.pattern()}] doesn't match ${lines[0]}")
+        }
+        methodLine.group(1).length() < 100
+        new File(methodLine.group(2)).text == "'$args'".toString()
+        def returnLine = lines[1] =~ "-> '(0+\\.\\.0+)' \\(file://(.*)\\)"
+        if (!returnLine.matches()) {
+            throw new AssertionError("Matcher [${returnLine.pattern()}] doesn't match ${lines[1]}")
+        }
+        returnLine.group(1).length() < 100
+        new File(returnLine.group(2)).text == "'$args'".toString()
     }
 }

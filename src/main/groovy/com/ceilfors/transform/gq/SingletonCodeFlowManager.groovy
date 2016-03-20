@@ -38,9 +38,11 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
 
     def init(File directory, boolean timestamp) {
         gqDir = directory
+
         codeFlowPrinter = new IndentingCodeFlowPrinter(new SyntaxConvertingCodeFlowPrinter(
                 new MultiSyntaxConverter([
-                        new ToStringSyntaxConverter()
+                        new ToStringSyntaxConverter(),
+                        new LongToFileSyntaxConverter(gqDir)
                 ]),
                 new PrintWriter(new FileCreatingWriter(getGqFile()))
         ))
