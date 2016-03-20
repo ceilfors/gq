@@ -115,9 +115,7 @@ class LongToFileSyntaxConverterTest extends Specification {
 
     private File getFileFromExpression(String expression) {
         Matcher fileLocationMatcher = expression =~ ".*\\(file://(.*)\\)"
-        if (!fileLocationMatcher.matches()) {
-            throw new AssertionError("Matcher [${fileLocationMatcher.pattern()}] doesn't match $expression")
-        }
+        fileLocationMatcher.forceMatches()
         File file = new File(fileLocationMatcher.group(1))
         assert file.exists()
         return file

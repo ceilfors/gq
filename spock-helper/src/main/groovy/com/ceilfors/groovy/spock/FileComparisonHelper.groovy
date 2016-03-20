@@ -16,7 +16,8 @@
 
 package com.ceilfors.groovy.spock
 
-import org.spockframework.runtime.Condition
+import static com.ceilfors.groovy.spock.SpockHelper.getSpockStyleComparison
+
 /**
  * @author ceilfors
  */
@@ -60,9 +61,5 @@ class FileComparisonHelper {
         }
 
         throw new IllegalStateException('Could not find difference in text file!')
-    }
-
-    private static String getSpockStyleComparison(String text, String value1, String value2) {
-        return new Condition([value1, value2, false], text, null, null).getRendering()
     }
 }

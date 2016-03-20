@@ -196,18 +196,16 @@ class GqTest extends BaseSpecification {
         when:
         instance.simplyReturn(args)
 
-        then:
+        then: "Method arguments must be handled"
         def lines = gqFile.text.readLines()
         def methodLine = lines[0] =~ "simplyReturn\\('(0+\\.\\.0+)' \\(file://(.*)\\)\\)"
-        if (!methodLine.matches()) {
-            throw new AssertionError("Matcher [${methodLine.pattern()}] doesn't match ${lines[0]}")
-        }
+        methodLine.forceMatches()
         methodLine.group(1).length() < 100
         new File(methodLine.group(2)).text == "'$args'".toString()
+
+        then: "Return expression value must be handled"
         def returnLine = lines[1] =~ "-> '(0+\\.\\.0+)' \\(file://(.*)\\)"
-        if (!returnLine.matches()) {
-            throw new AssertionError("Matcher [${returnLine.pattern()}] doesn't match ${lines[1]}")
-        }
+        returnLine.forceMatches()
         returnLine.group(1).length() < 100
         new File(returnLine.group(2)).text == "'$args'".toString()
     }
