@@ -16,6 +16,10 @@
 
 package com.ceilfors.transform.gq
 
+import org.fusesource.jansi.Ansi
+
+import static org.fusesource.jansi.Ansi.ansi
+
 /**
  * @author ceilfors
  */
@@ -76,6 +80,8 @@ class TimestampCodeFlowPrinter implements CodeFlowPrinter {
     }
 
     void writeTimestamp() {
+        out.print(ansi().fg(Ansi.Color.YELLOW).toString())
         out.print(sprintf('%4.1fs ', currentElapsedMilli() / 1000))
+        out.print(ansi().reset().toString())
     }
 }

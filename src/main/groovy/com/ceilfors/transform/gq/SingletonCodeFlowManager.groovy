@@ -16,6 +16,8 @@
 
 package com.ceilfors.transform.gq
 
+import org.fusesource.jansi.Ansi
+
 /**
  * @author ceilfors
  */
@@ -27,6 +29,7 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
      * Configure the temporary directory that gq should use. It goes to /tmp by default.
      */
     public static final String GQ_TMP = "gq.tmp"
+    public static final String GQ_COLOR = "gq.color"
 
     private CodeFlowPrinter codeFlowPrinter
     private File gqDir
@@ -36,7 +39,7 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
         return new File(System.getProperty(GQ_TMP, "/tmp"))
     }
 
-    def init(File directory, boolean timestamp) {
+    def init(File directory, boolean timestamp, boolean color = false) {
         gqDir = directory
 
         codeFlowPrinter = new IndentingCodeFlowPrinter(new SyntaxConvertingCodeFlowPrinter(
@@ -49,10 +52,14 @@ enum SingletonCodeFlowManager implements CodeFlowListener {
         if (timestamp) {
             codeFlowPrinter = new TimestampCodeFlowPrinter(codeFlowPrinter, System.&currentTimeMillis)
         }
+
+        Ansi.setEnabled(color)
     }
 
     {
-        init(createGqDir(), true)
+        init(createGqDir(),
+                true,
+                System.getProperty(GQ_COLOR, "true").toBoolean())
     }
 
     public final File getGqFile() {

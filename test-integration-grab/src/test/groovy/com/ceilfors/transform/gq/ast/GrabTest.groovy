@@ -37,6 +37,7 @@ class GrabTest {
 
         def directory = temporaryFolder.newFolder().absolutePath
         System.setProperty('gq.tmp', directory)
+        System.setProperty('gq.color', 'false')
         System.setProperty('grape.root', directory)
 
         gqFile = new File(directory, 'gq')

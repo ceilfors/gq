@@ -16,6 +16,10 @@
 
 package com.ceilfors.transform.gq
 
+import org.fusesource.jansi.Ansi
+
+import static org.fusesource.jansi.Ansi.ansi
+
 /**
  * @author ceilfors
  */
@@ -31,9 +35,12 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
 
     @Override
     void printMethodStart(MethodInfo methodInfo) {
+        out.print(ansi().fg(Ansi.Color.GREEN).toString())
         out.print(methodInfo.name)
+        out.print(ansi().reset().toString())
+
         out.print('(')
-        out.print(methodInfo.args.collect { syntaxConverter.convertExpressionValue(it) }.join(', '))
+        out.print(methodInfo.args.collect { convertExpressionValue(it) }.join(', '))
         out.println(')')
     }
 
@@ -44,13 +51,13 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
     @Override
     void printMethodEnd(Object result) {
         out.print('-> ')
-        out.println(syntaxConverter.convertExpressionValue(result))
+        out.println(convertExpressionValue(result))
     }
 
     @Override
     void printExpression(ExpressionInfo expressionInfo) {
         out.print("${expressionInfo.methodName}: ${expressionInfo.text.replace("\n", "")}=")
-        out.print(syntaxConverter.convertExpressionValue(expressionInfo.value))
+        out.print(convertExpressionValue(expressionInfo.value))
         out.println()
     }
 
@@ -65,6 +72,13 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
         String decoratedMethodName = 'decorated$' + exceptionInfo.methodName
         def trace = exception.stackTrace.find { it.methodName == decoratedMethodName }
 
-        out.println("!> ${exception.class.simpleName}('${exception.message}') at ${trace.fileName}:${trace.lineNumber}")
+        out.print(ansi().fg(Ansi.Color.RED).toString())
+        out.print("!> ${exception.class.simpleName}('${exception.message}')")
+        out.print(ansi().reset().toString())
+        out.println(" at ${trace.fileName}:${trace.lineNumber}")
+    }
+
+    private String convertExpressionValue(Object expressionValue) {
+        ansi().fg(Ansi.Color.CYAN).a(syntaxConverter.convertExpressionValue(expressionValue)).reset().toString()
     }
 }

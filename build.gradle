@@ -22,6 +22,8 @@ sourceSets {
 dependencies {
     provided 'org.codehaus.groovy:groovy-all:2.4.5'
     compile 'com.github.yihtserns:groovy-decorator:0.0.4'
+    compile 'org.fusesource.jansi:jansi:1.11'
+
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude group: 'org.codehaus.groovy'
     }

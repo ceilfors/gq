@@ -1,0 +1,23 @@
+apply plugin: 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.5'
+    compile(rootProject)
+}
+
+def tmpDir = File.createTempDir()
+
+task run(dependsOn: 'classes', type: JavaExec) {
+    main = 'com.ceilfors.groovy.gq.visualizeColor'
+    classpath = sourceSets.test.runtimeClasspath
+    systemProperties = ['gq.tmp': tmpDir]
+}
+run.doLast {
+    println new File(tmpDir, 'gq').text
+}
+
+test.dependsOn('run')
