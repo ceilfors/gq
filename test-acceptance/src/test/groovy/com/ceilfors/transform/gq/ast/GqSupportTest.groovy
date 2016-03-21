@@ -122,6 +122,24 @@ class GqSupportTest extends BaseSpecification {
                   |""".stripMargin()
     }
 
+    @NotYetImplemented // Got Can't be called during runtime!
+    def "Should be able to be called nested-ly"() {
+        setup:
+        def instance = toInstance(insertPackageAndImport("""
+            gq(gq(gq(5) + 5) + 5)
+        """))
+
+        when:
+        instance.main()
+
+        then:
+        fileContentEquals gqFile,
+                """run: 5=5
+                  |run: gq(5) + 5 = 10
+                  |run: gq(gq(5) + 5) + 5 = 15
+                  |""".stripMargin()
+    }
+
     @NotYetImplemented
     def "Should be able to use OR operator"() {
         setup:
