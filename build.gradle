@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
@@ -30,6 +32,13 @@ dependencies {
     testCompile 'cglib:cglib-nodep:3.2.1'
     testCompile 'junit:junit:4.12'
     testCompile project(':spock-helper')
+}
+
+processResources {
+    filter ReplaceTokens, tokens: [
+            "version": project.property("version"),
+            "name": project.property("name"),
+    ]
 }
 
 test {

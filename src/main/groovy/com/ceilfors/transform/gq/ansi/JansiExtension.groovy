@@ -14,34 +14,18 @@
  * limitations under the License.
  */
 
-package com.ceilfors.groovy.gq
+package com.ceilfors.transform.gq.ansi
 
-import com.ceilfors.transform.gq.ast.Gq
-import static com.ceilfors.transform.gq.GqSupport.gq
+import org.fusesource.jansi.Ansi.Color
+
+import static org.fusesource.jansi.Ansi.ansi
 
 /**
  * @author ceilfors
  */
-@Gq
-String hello() {
-    try {
-       oops()
-    } catch(ignored) {}
-    shout("hello ") + gq(scream("world"))
-}
+class JansiExtension {
 
-@Gq
-String shout(String message) {
-    return message.toUpperCase()
+    static final String ansi(String self, Color color) {
+        return ansi().fg(color).a(self).reset().toString()
+    }
 }
-
-String scream(String message) {
-    return gq(message) + "!!!"
-}
-
-@Gq
-String oops() {
-    throw new RuntimeException('Hello')
-}
-
-hello()

@@ -16,10 +16,7 @@
 
 package com.ceilfors.transform.gq
 
-import org.fusesource.jansi.Ansi
-
-import static org.fusesource.jansi.Ansi.ansi
-
+import org.fusesource.jansi.Ansi.Color
 /**
  * @author ceilfors
  */
@@ -35,9 +32,7 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
 
     @Override
     void printMethodStart(MethodInfo methodInfo) {
-        out.print(ansi().fg(Ansi.Color.GREEN).toString())
-        out.print(methodInfo.name)
-        out.print(ansi().reset().toString())
+        out.print(methodInfo.name.ansi(Color.GREEN))
 
         out.print('(')
         out.print(methodInfo.args.collect { convertExpressionValue(it) }.join(', '))
@@ -50,7 +45,7 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
 
     @Override
     void printMethodEnd(Object result) {
-        out.print('-> ')
+        out.print('-> '.ansi(Color.GREEN))
         out.println(convertExpressionValue(result))
     }
 
@@ -72,13 +67,11 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
         String decoratedMethodName = 'decorated$' + exceptionInfo.methodName
         def trace = exception.stackTrace.find { it.methodName == decoratedMethodName }
 
-        out.print(ansi().fg(Ansi.Color.RED).toString())
-        out.print("!> ${exception.class.simpleName}('${exception.message}')")
-        out.print(ansi().reset().toString())
+        out.print("!> ${exception.class.simpleName}('${exception.message}')".ansi(Color.RED))
         out.println(" at ${trace.fileName}:${trace.lineNumber}")
     }
 
     private String convertExpressionValue(Object expressionValue) {
-        ansi().fg(Ansi.Color.CYAN).a(syntaxConverter.convertExpressionValue(expressionValue)).reset().toString()
+        syntaxConverter.convertExpressionValue(expressionValue).ansi(Color.CYAN)
     }
 }
