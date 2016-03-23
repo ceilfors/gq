@@ -16,6 +16,8 @@
 
 package com.ceilfors.transform.gq.ast
 
+import com.ceilfors.transform.gq.GqExample
+
 import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
 
 class GqTest extends BaseSpecification {
@@ -23,7 +25,7 @@ class GqTest extends BaseSpecification {
     def "Should write the name of a method with empty parameter"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @Gq
+            @gt
             int "return 5"() {
                 5
             }
@@ -40,7 +42,7 @@ class GqTest extends BaseSpecification {
     def "Should write the returned value of a method call"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @Gq
+            @gt
             int "return 5"() {
                 5
             }
@@ -57,7 +59,7 @@ class GqTest extends BaseSpecification {
     def "Should write the arguments of a method call"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @Gq
+            @gt
             int add(int x, int y) {
                 return x + y
             }
@@ -74,7 +76,7 @@ class GqTest extends BaseSpecification {
     def "Should be able to write a method when its return type is void"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @Gq
+            @gt
             void "return void"() {}
         """))
 
@@ -88,9 +90,9 @@ class GqTest extends BaseSpecification {
     def "Should write nested method call with indentation"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @Gq int nested()          { nested2() + 5 }
+            @gt int nested()          { nested2() + 5 }
                 private int nested2() { nested3() + 5 }
-            @Gq private int nested3() { 5 }
+            @gt private int nested3() { 5 }
         """))
 
         when:
@@ -167,7 +169,7 @@ class GqTest extends BaseSpecification {
     def "Should be able to be used in standalone Groovy script"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
-            @Gq
+            @gt
             def simplyReturn(arg) { arg }
 
             simplyReturn(5)
@@ -186,7 +188,7 @@ class GqTest extends BaseSpecification {
     def "Should shorten long expression and save the original expression to a temporary file"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @Gq
+            @gt
             String simplyReturn(arg) {
                 return arg
             }
