@@ -16,13 +16,10 @@
 
 package com.ceilfors.groovy.gq
 
-import com.ceilfors.transform.gq.ast.Gq
-import static com.ceilfors.transform.gq.GqSupport.gq
-
 /**
  * @author ceilfors
  */
-@Gq
+@gt
 String hello() {
     try {
        oops()
@@ -30,7 +27,7 @@ String hello() {
     shout("hello ") + gq(scream("world"))
 }
 
-@Gq
+@gt
 String shout(String message) {
     return message.toUpperCase()
 }
@@ -39,7 +36,7 @@ String scream(String message) {
     return gq(message) + "!!!"
 }
 
-@Gq
+@gt
 String oops() {
     throw new RuntimeException('Hello')
 }

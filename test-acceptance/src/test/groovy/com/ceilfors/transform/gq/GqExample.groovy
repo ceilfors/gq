@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq.ast
+package com.ceilfors.transform.gq
 
 /**
  * @author ceilfors

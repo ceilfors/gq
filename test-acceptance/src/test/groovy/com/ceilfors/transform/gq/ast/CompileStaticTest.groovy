@@ -59,7 +59,7 @@ class CompileStaticTest extends BaseSpecification {
     def "Gq should be able to be used in conjunction with CompileStatic method"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @Gq
+            @gt
             @groovy.transform.CompileStatic
             public String compileStatic() {
                 return "static!"
@@ -80,7 +80,7 @@ class CompileStaticTest extends BaseSpecification {
         def instance = toInstance(insertPackageAndImport("""
             @groovy.transform.CompileStatic
             class Test {
-                @Gq
+                @gt
                 public String compileStatic() {
                     return "static!"
                 }

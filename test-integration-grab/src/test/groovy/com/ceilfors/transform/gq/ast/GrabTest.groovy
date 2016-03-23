@@ -51,8 +51,6 @@ class GrabTest {
 
         def test = new GroovyClassLoader().parseClass("""
 
-            import static com.ceilfors.transform.gq.GqSupport.gq
-
             @Grab(group='${artifactGroup}', module='${artifactModule}', version='${artifactVersion}')
             class GrabTest {
 

@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq.ast
+package com.ceilfors.transform.gq
 
 import com.github.yihtserns.groovy.decorator.MethodDecorator
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
-
-import com.ceilfors.transform.gq.ExceptionInfo
-import com.ceilfors.transform.gq.MethodInfo
-import com.ceilfors.transform.gq.SingletonCodeFlowManager
 
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
-
 /**
  * @author ceilfors
  */
