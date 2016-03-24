@@ -32,22 +32,18 @@ import java.lang.annotation.Target
     return { args ->
         SingletonCodeFlowManager.INSTANCE.methodStarted(new MethodInfo(func.name, args))
 
-        def result = null
         try {
-            result = func(args)
+            def result = func(args)
+            if (voidReturnType) {
+                SingletonCodeFlowManager.INSTANCE.methodEnded()
+            } else {
+                SingletonCodeFlowManager.INSTANCE.methodEnded(result)
+            }
+            return result
         } catch (Exception e) {
             SingletonCodeFlowManager.INSTANCE.exceptionThrown(new ExceptionInfo(func.name, e))
-
             throw e
         }
-
-        if (voidReturnType) {
-            SingletonCodeFlowManager.INSTANCE.methodEnded()
-        } else {
-            SingletonCodeFlowManager.INSTANCE.methodEnded(result)
-        }
-
-        return result
     }
 })
 @GroovyASTTransformationClass ("com.github.yihtserns.groovy.decorator.DecoratorASTTransformation")
