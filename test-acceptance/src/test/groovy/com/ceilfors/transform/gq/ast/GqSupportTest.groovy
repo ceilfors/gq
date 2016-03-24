@@ -122,11 +122,10 @@ class GqSupportTest extends BaseSpecification {
                   |""".stripMargin()
     }
 
-    @NotYetImplemented // Got Can't be called during runtime!
     def "Should be able to be called nested-ly"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
-            gq(gq(gq(5) + 5) + 5)
+            gq(gq(gq(5) + 5) + 5) + 5
         """))
 
         when:
@@ -135,32 +134,32 @@ class GqSupportTest extends BaseSpecification {
         then:
         fileContentEquals gqFile,
                 """run: 5=5
-                  |run: gq(5) + 5 = 10
-                  |run: gq(gq(5) + 5) + 5 = 15
+                  |run: gq(5) + 5=10
+                  |run: gq(gq(5) + 5) + 5=15
                   |""".stripMargin()
     }
 
     @NotYetImplemented
     def "Should be able to use OR operator"() {
         setup:
-        def instance = toInstance(insertPackageAndImport("gq | 'text'"))
+        def instance = toInstance(insertPackageAndImport("gq | 3 + 5"))
 
         when:
         instance.main()
 
         then:
-        fileContentEquals gqFile, "run: 'text'='text'\n"
+        fileContentEquals gqFile, "run: 3 + 5=8\n"
     }
 
     @NotYetImplemented
     def "Should be able to use DIV operator"() {
         setup:
-        def instance = toInstance(insertPackageAndImport("gq / 'text'"))
+        def instance = toInstance(insertPackageAndImport("gq / 3 + 5"))
 
         when:
         instance.main()
 
         then:
-        fileContentEquals gqFile, "run: 'text'='text'\n"
+        fileContentEquals gqFile, "run: 3=3\n"
     }
 }

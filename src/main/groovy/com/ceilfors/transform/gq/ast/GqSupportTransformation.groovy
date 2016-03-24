@@ -35,11 +35,11 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.runtime.MethodClosure
 import org.codehaus.groovy.transform.ASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
+
 import static org.codehaus.groovy.ast.tools.GeneralUtils.args
 import static org.codehaus.groovy.ast.tools.GeneralUtils.classX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
-
 /**
  * @author ceilfors
  */
@@ -48,50 +48,60 @@ class GqSupportTransformation implements ASTTransformation {
 
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
-        def transformer = new ClassCodeExpressionTransformer() {
-
-            String currentMethodName
-
-            @Override
-            protected SourceUnit getSourceUnit() {
-                sourceUnit
-            }
-
-            @Override
-            protected void visitConstructorOrMethod(MethodNode node, boolean isConstructor) {
-                currentMethodName = node.name
-                super.visitConstructorOrMethod(node, isConstructor)
-            }
-
-            @Override
-            Expression transform(Expression expression) {
-                if (expression instanceof StaticMethodCallExpression && expression.ownerType.name == GqSupport.name) {
-                    // Traps normal method call to GqSupport and reroute to CodeFlowListeners
-                    def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
-                    return callExpressionProcessed(currentMethodName, newExpressionInfo(getSourceUnit(), currentMethodName, originalArg))
-                }
-                return super.transform(expression)
-            }
-        }
-
+        def final transformer = new GqSupportTransformer(sourceUnit)
         for (ClassNode classNode : sourceUnit.AST.classes) {
             transformer.visitClass(classNode)
         }
     }
 
-    private static MethodCallExpression callExpressionProcessed(String methodName, Expression expressionInfo) {
-        // MethodClosure type is deliberately used for better IDE support e.g. method name refactoring, etc.
-        def methodClosure = SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure
+    private class GqSupportTransformer extends ClassCodeExpressionTransformer {
 
-        return new MethodCallExpression(
-            propX(classX(SingletonCodeFlowManager), "INSTANCE"),
-            methodClosure.method,
-            args(constX(methodName), expressionInfo))
-    }
+        private SourceUnit sourceUnit
 
-    private static ConstructorCallExpression newExpressionInfo(SourceUnit sourceUnit, String methodName, Expression x) {
-        def text = lookup(sourceUnit, x)
-        new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
+        private String currentMethodName
+
+        GqSupportTransformer(SourceUnit sourceUnit, String initialMethodName = null) {
+            this.sourceUnit = sourceUnit
+            this.currentMethodName = initialMethodName
+        }
+
+        @Override
+        protected void visitConstructorOrMethod(MethodNode node, boolean isConstructor) {
+            currentMethodName = node.name
+            super.visitConstructorOrMethod(node, isConstructor)
+        }
+
+        @Override
+        Expression transform(Expression expression) {
+            if (expression instanceof StaticMethodCallExpression && expression.ownerType.name == GqSupport.name) {
+                // Traps normal method call to GqSupport and reroute to CodeFlowListeners
+                def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
+                originalArg = originalArg.transformExpression(new GqSupportTransformer(sourceUnit, currentMethodName))
+                return callExpressionProcessed(currentMethodName, newExpressionInfo(sourceUnit, currentMethodName, originalArg))
+            } else {
+                return super.transform(expression)
+            }
+        }
+
+        @Override
+        protected SourceUnit getSourceUnit() {
+            return sourceUnit
+        }
+
+        private MethodCallExpression callExpressionProcessed(String methodName, Expression expressionInfo) {
+            // MethodClosure type is deliberately used for better IDE support e.g. method name refactoring, etc.
+            def methodClosure = SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure
+
+            return new MethodCallExpression(
+                    propX(classX(SingletonCodeFlowManager), "INSTANCE"),
+                    methodClosure.method,
+                    args(constX(methodName), expressionInfo))
+        }
+
+        private ConstructorCallExpression newExpressionInfo(SourceUnit sourceUnit, String methodName, Expression x) {
+            def text = lookup(sourceUnit, x)
+            new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
+        }
     }
 
     private static String lookup(SourceUnit sourceUnit, ASTNode node) {

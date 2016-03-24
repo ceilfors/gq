@@ -30,6 +30,6 @@ class GqSupport {
      * @return the original value of the expression to help method chaining
      */
     def <T> T call(T value) {
-        throw new IllegalStateException("Can't be called during runtime!")
+        throw new IllegalStateException("Gq bug! The method [call($value)] should not be called on runtime!")
     }
 }
