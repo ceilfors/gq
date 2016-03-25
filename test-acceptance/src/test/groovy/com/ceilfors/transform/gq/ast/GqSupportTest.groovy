@@ -149,9 +149,11 @@ class GqSupportTest extends BaseSpecification {
         fileContentEquals gqFile, "test: $result\n"
 
         where:
-        input         || result
-        "gq | 3 + 5 " || "3 + 5=8"
-        "gq|2+2"      || "2 + 2=4"
+        input          || result
+        "gq | 3 + 5 "  || "3 + 5=8"
+        "gq|2+2"       || "2 + 2=4"
+        "3 + (gq | 5)" || "5=5"
+        "gq | 'test'"  || "test='test'"
     }
 
     def "Should be able to use DIV operator"() {
@@ -160,5 +162,14 @@ class GqSupportTest extends BaseSpecification {
 
         then:
         fileContentEquals gqFile, "test: 3=3\n"
+    }
+
+    def "Should not hit unexpected exception when gq is used wrongly"() {
+        when:
+        execute("1 + gq | 1")
+
+        then:
+        Throwable exception = thrown(MissingMethodException)
+        exception.message.contains('java.lang.Integer.plus()')
     }
 }

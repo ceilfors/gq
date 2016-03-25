@@ -13,6 +13,7 @@ This file must be moved to github issue tracker once we hit 0.1.0
 - 0.1.0 Exception when gq(gq(5))
 
 # Feature
+- Allow alias to be overridden
 - 0.1.0 Support for / and |
 - 0.1.0 @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.
 - @Gq Exception - Print source code context e.g. source code snippets and line numbers

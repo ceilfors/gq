@@ -74,11 +74,11 @@ class GqSupportTransformation implements ASTTransformation {
 
         @Override
         Expression transform(Expression expression) {
-            if (isGqSupportExpression(expression)) {
+            if (isGqSupportExpression(expression) && expression.method == getGqSupportAlias()) {
                 // Traps normal method call to GqSupport and reroute to CodeFlowListeners
                 def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
                 originalArg = originalArg.transformExpression(new GqSupportTransformer(sourceUnit, currentMethodName))
-                return callExpressionProcessed(currentMethodName, newExpressionInfo(sourceUnit, currentMethodName, originalArg))
+                return callExpressionProcessed(currentMethodName, newExpressionInfo(currentMethodName, originalArg))
             }
 
             if (expression instanceof BinaryExpression
@@ -86,7 +86,7 @@ class GqSupportTransformation implements ASTTransformation {
                     && expression.operation.text in ['/', '|']) { // Gq/ or Gq|
                 Expression actualOperation = expression.rightExpression
                 String text = actualOperation.text
-                if (expression.operation.text == '|') {
+                if (expression.rightExpression instanceof BinaryExpression && expression.operation.text == '|') {
                     // Text for OR operation is somehow surrounded by parenthesis
                     text = text.substring(1, text.length() - 1)
                 }
@@ -115,13 +115,17 @@ class GqSupportTransformation implements ASTTransformation {
                     args(constX(methodName), expressionInfo))
         }
 
-        private ConstructorCallExpression newExpressionInfo(SourceUnit sourceUnit, String methodName, Expression x) {
+        private ConstructorCallExpression newExpressionInfo(String methodName, Expression x) {
             def text = lookup(sourceUnit, x)
             new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
         }
 
         private ConstructorCallExpression newExpressionInfo(String methodName, Expression x, String text) {
             new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
+        }
+
+        private getGqSupportAlias() {
+            sourceUnit.AST.staticImports.values().find { it.fieldName == 'gq' && it.type == ClassHelper.make(GqSupport) }.alias
         }
     }
 
