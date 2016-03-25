@@ -60,6 +60,21 @@ class BaseSpecification extends Specification {
         return clazz.newInstance()
     }
 
+    static execute(String text) {
+        return toInstance(wrapInMethod(text)).test()
+    }
+
+    /**
+     * This method allows easier debugging than standalone groovy because standalone groovy
+     * will create more expressions that will be visited by AST.
+     */
+    static wrapInMethod(String text) {
+        return wrapMethodInClass(
+                """def test() {
+                  |  $text
+                  |}""".stripMargin())
+    }
+
     static wrapMethodInClass(String text) {
         return insertPackageAndImport(
                 """class Test {
