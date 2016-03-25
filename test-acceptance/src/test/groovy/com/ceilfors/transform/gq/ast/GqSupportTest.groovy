@@ -143,25 +143,32 @@ class GqSupportTest extends BaseSpecification {
     @Unroll
     def "Should be able to use OR operator: #input"() {
         when:
-        execute(input)
+        execute input
 
         then:
         fileContentEquals gqFile, "test: $result\n"
 
         where:
-        input          || result
-        "gq | 3 + 5 "  || "3 + 5=8"
-        "gq|2+2"       || "2 + 2=4"
-        "3 + (gq | 5)" || "5=5"
-        "gq | 'test'"  || "test='test'"
+        input                 || result
+        "gq | 3 + 5 "         || "3 + 5=8"
+        "gq|2+2"              || "2 + 2=4"
+        "3 + (gq | 5)"        || "5=5"
+        "true && gq | 'test'" || "test='test'"
     }
 
-    def "Should be able to use DIV operator"() {
+    @Unroll
+    def "Should be able to use DIV operator: #input"() {
         when:
-        execute("gq / 3 + 5")
+        execute input
 
         then:
-        fileContentEquals gqFile, "test: 3=3\n"
+        fileContentEquals gqFile, "test: $result\n"
+
+        where:
+        input                   || result
+        "gq / 3 + 5 "           || "3=3"
+        "1 + gq / 1"            || "1=1"
+        "'test' && gq / 'test'" || "test='test'"
     }
 
     def "Should not hit unexpected exception when gq is used wrongly"() {

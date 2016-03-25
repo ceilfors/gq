@@ -30,6 +30,26 @@ class GqSupport {
      * @return the original value of the expression to help method chaining
      */
     def <T> T call(T value) {
-        throw new IllegalStateException("Gq bug! The method [call($value)] should not be called on runtime!")
+        throw new IllegalStateException("Gq bug! The method [gq($value)] should not be called on runtime!")
+    }
+
+    /**
+     * Logs expression to gq file.
+     *
+     * @param value which expression is to be logged to gq file
+     * @return the original value of the expression to help method chaining
+     */
+    def <T> T div(T value) {
+        throw new IllegalStateException("Gq bug! The method [gq / $value] should not be called on runtime!")
+    }
+
+    /**
+     * Logs expression to gq file.
+     *
+     * @param value which expression is to be logged to gq file
+     * @return the original value of the expression to help method chaining
+     */
+    def <T> T or(T value) {
+        throw new IllegalStateException("Gq bug! The method [gq | $value] should not be called on runtime!")
     }
 }
