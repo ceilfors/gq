@@ -153,7 +153,7 @@ class GqSupportTest extends BaseSpecification {
         "gq | 3 + 5 "         || "3 + 5=8"
         "gq|2+2"              || "2 + 2=4"
         "3 + (gq | 5)"        || "5=5"
-        "true && gq | 'test'" || "test='test'"
+        "true && gq | 'test'" || "'test'='test'"
     }
 
     @Unroll
@@ -168,7 +168,7 @@ class GqSupportTest extends BaseSpecification {
         input                   || result
         "gq / 3 + 5 "           || "3=3"
         "1 + gq / 1"            || "1=1"
-        "'test' && gq / 'test'" || "test='test'"
+        "'test' && gq / 'test'" || "'test'='test'"
     }
 
     def "Should be able to use all operators at the same time"() {
@@ -179,7 +179,7 @@ class GqSupportTest extends BaseSpecification {
         fileContentEquals gqFile,
                 """test: 1=1
                   |test: 2=2
-                  |test: (gq / 1) + gq(2)=3
+                  |test: gq / 1 + gq(2)=3
                   |""".stripMargin()
     }
 

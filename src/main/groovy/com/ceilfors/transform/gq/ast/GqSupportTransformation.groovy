@@ -85,12 +85,7 @@ class GqSupportTransformation implements ASTTransformation {
                     && isGqSupportExpression(expression.leftExpression)
                     && expression.operation.text in ['/', '|']) { // Gq/ or Gq|
                 Expression actualOperation = expression.rightExpression
-                String text = actualOperation.text
-                if (expression.rightExpression instanceof BinaryExpression && expression.operation.text == '|') {
-                    // Text for OR operation is somehow surrounded by parenthesis
-                    text = text.substring(1, text.length() - 1)
-                }
-                text = hideClass(text)
+                String text = lookupText(actualOperation)
                 actualOperation = this.transform(actualOperation)
                 return callExpressionProcessed(currentMethodName, newExpressionInfo(currentMethodName, actualOperation, text))
             }
@@ -129,9 +124,13 @@ class GqSupportTransformation implements ASTTransformation {
             sourceUnit.AST.staticImports.values().find { it.fieldName == 'gq' && it.type == ClassHelper.make(GqSupport) }.alias
         }
 
-        private hideClass(String text) {
-            text = text.replaceAll('com\\.ceilfors\\.transform\\.gq\\.GqSupport\\.getGq\\(\\)', 'gq')
-            return text.replaceAll('com\\.ceilfors\\.transform\\.gq\\.GqSupport\\.gq', 'gq')
+        private String lookupText(ASTNode node) {
+            if (node instanceof BinaryExpression) {
+                return lookupText(node.leftExpression) + " " +
+                        lookup(sourceUnit, node) + " " +
+                        lookupText(node.rightExpression)
+            }
+            return lookup(sourceUnit, node)
         }
     }
 
