@@ -171,6 +171,18 @@ class GqSupportTest extends BaseSpecification {
         "'test' && gq / 'test'" || "test='test'"
     }
 
+    def "Should be able to use all operators at the same time"() {
+        when:
+        execute 'gq | gq / 1 + gq(2)'
+
+        then:
+        fileContentEquals gqFile,
+                """test: 1=1
+                  |test: 2=2
+                  |test: (gq / 1) + gq(2)=3
+                  |""".stripMargin()
+    }
+
     def "Should not hit unexpected exception when gq is used wrongly"() {
         when:
         execute("1 + gq | 1")

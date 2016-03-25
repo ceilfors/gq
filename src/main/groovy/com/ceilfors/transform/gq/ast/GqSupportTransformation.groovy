@@ -77,7 +77,7 @@ class GqSupportTransformation implements ASTTransformation {
             if (isGqSupportExpression(expression) && expression.method == getGqSupportAlias()) {
                 // Traps normal method call to GqSupport and reroute to CodeFlowListeners
                 def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
-                originalArg = originalArg.transformExpression(new GqSupportTransformer(sourceUnit, currentMethodName))
+                originalArg = this.transform(originalArg)
                 return callExpressionProcessed(currentMethodName, newExpressionInfo(currentMethodName, originalArg))
             }
 
@@ -90,7 +90,8 @@ class GqSupportTransformation implements ASTTransformation {
                     // Text for OR operation is somehow surrounded by parenthesis
                     text = text.substring(1, text.length() - 1)
                 }
-
+                text = hideClass(text)
+                actualOperation = this.transform(actualOperation)
                 return callExpressionProcessed(currentMethodName, newExpressionInfo(currentMethodName, actualOperation, text))
             }
             return super.transform(expression)
@@ -126,6 +127,11 @@ class GqSupportTransformation implements ASTTransformation {
 
         private getGqSupportAlias() {
             sourceUnit.AST.staticImports.values().find { it.fieldName == 'gq' && it.type == ClassHelper.make(GqSupport) }.alias
+        }
+
+        private hideClass(String text) {
+            text = text.replaceAll('com\\.ceilfors\\.transform\\.gq\\.GqSupport\\.getGq\\(\\)', 'gq')
+            return text.replaceAll('com\\.ceilfors\\.transform\\.gq\\.GqSupport\\.gq', 'gq')
         }
     }
 
