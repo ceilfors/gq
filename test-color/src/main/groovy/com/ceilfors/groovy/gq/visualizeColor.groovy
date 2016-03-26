@@ -19,24 +19,24 @@ package com.ceilfors.groovy.gq
 /**
  * @author ceilfors
  */
-@gt
+@q
 String hello() {
     try {
        oops()
     } catch(ignored) {}
-    shout("hello ") + gq(scream("world"))
+    shout("hello ") + q(scream("world"))
 }
 
-@gt
+@q
 String shout(String message) {
     return message.toUpperCase()
 }
 
 String scream(String message) {
-    return gq(message) + "!!!"
+    return q(message) + "!!!"
 }
 
-@gt
+@q
 String oops() {
     throw new RuntimeException('Hello')
 }

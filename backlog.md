@@ -4,6 +4,7 @@ This file must be moved to github issue tracker once we hit 0.1.0
 
 # Technical debt
 - Verify the best condition to remove parentheses when | is used
+- Use BaseSpecification execute method more
 
 # Feature
 - Allow alias to be overridden

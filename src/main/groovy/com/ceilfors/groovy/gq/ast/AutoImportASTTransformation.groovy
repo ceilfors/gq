@@ -17,7 +17,6 @@
 package com.ceilfors.groovy.gq.ast
 
 import com.ceilfors.groovy.gq.Gq
-import com.ceilfors.groovy.gq.GqSupport
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.control.CompilePhase
@@ -33,7 +32,6 @@ class AutoImportASTTransformation implements ASTTransformation {
 
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
-        sourceUnit.getAST().addImport("gt", ClassHelper.make(Gq))
-        sourceUnit.getAST().addStaticImport(ClassHelper.make(GqSupport), "gq", "gq")
+        sourceUnit.getAST().addImport("q", ClassHelper.make(Gq))
     }
 }

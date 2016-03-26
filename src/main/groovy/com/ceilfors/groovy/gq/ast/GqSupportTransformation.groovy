@@ -16,9 +16,9 @@
 
 package com.ceilfors.groovy.gq.ast
 
-import com.ceilfors.groovy.gq.codeflow.ExpressionInfo
-import com.ceilfors.groovy.gq.GqSupport
+import com.ceilfors.groovy.gq.Gq
 import com.ceilfors.groovy.gq.SingletonCodeFlowManager
+import com.ceilfors.groovy.gq.codeflow.ExpressionInfo
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassCodeExpressionTransformer
 import org.codehaus.groovy.ast.ClassHelper
@@ -29,7 +29,6 @@ import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
-import org.codehaus.groovy.ast.expr.StaticMethodCallExpression
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.runtime.MethodClosure
@@ -49,8 +48,6 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 class GqSupportTransformation implements ASTTransformation {
 
-    private static final GQ_SUPPORT = ClassHelper.make(GqSupport)
-
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
         def final transformer = new GqSupportTransformer(sourceUnit)
@@ -59,12 +56,6 @@ class GqSupportTransformation implements ASTTransformation {
         }
     }
 
-    /**
-     * This <tt>ExpressionTransformer</tt> traps interactions to GqSupport object and
-     * reroute the interaction to CodeFlowListeners.
-     *
-     * @author ceilfors
-     */
     class GqSupportTransformer extends ClassCodeExpressionTransformer {
 
         private SourceUnit sourceUnit
@@ -88,19 +79,19 @@ class GqSupportTransformation implements ASTTransformation {
 
         @Override
         Expression transform(Expression expression) {
-            if (isGqSupportExpression(expression) && expression.method == getGqSupportAlias()) {
-                return transformCall(expression as StaticMethodCallExpression)
+            if (expression instanceof MethodCallExpression && expression.methodAsString == getGqAlias()) {
+                return transformCall(expression as MethodCallExpression)
             }
 
             if (expression instanceof BinaryExpression
-                    && isGqSupportExpression(expression.leftExpression)
+                    && expression.leftExpression.text == classX(Gq).text
                     && expression.operation.type in [Types.PIPE, Types.DIVIDE]) {
                 return transformOperator(expression)
             }
             return super.transform(expression)
         }
 
-        Expression transformCall(StaticMethodCallExpression expression) {
+        Expression transformCall(MethodCallExpression expression) {
             def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
             String text = lookupText(sourceUnit, originalArg)
             return callExpressionProcessed(newExpressionInfo(originalArg.transformExpression(this), text))
@@ -110,10 +101,6 @@ class GqSupportTransformation implements ASTTransformation {
             Expression actualOperation = expression.rightExpression
             String text = lookupBinary(sourceUnit, actualOperation)
             return callExpressionProcessed(newExpressionInfo(actualOperation.transformExpression(this), text))
-        }
-
-        private boolean isGqSupportExpression(Expression expression) {
-            return expression instanceof StaticMethodCallExpression && expression.ownerType.name == GqSupport.name
         }
 
         private MethodCallExpression callExpressionProcessed(Expression expressionInfo) {
@@ -130,8 +117,8 @@ class GqSupportTransformation implements ASTTransformation {
             new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(currentMethodName), constX(text), x))
         }
 
-        private getGqSupportAlias() {
-            sourceUnit.AST.staticImports.values().find { it.fieldName == 'gq' && it.type == GQ_SUPPORT }.alias
+        private getGqAlias() {
+            sourceUnit.AST.imports.find { it.type == ClassHelper.make(Gq) }.alias
         }
     }
 }

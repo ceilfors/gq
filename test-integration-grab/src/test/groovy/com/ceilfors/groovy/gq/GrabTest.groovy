@@ -55,7 +55,7 @@ class GrabTest {
             class GrabTest {
 
                 int highFive() {
-                    return gq(2 + 3)
+                    return q(2 + 3)
                 }
             }
         """).newInstance()

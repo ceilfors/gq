@@ -29,7 +29,7 @@ class GqSupportTest extends BaseSpecification {
         setup:
         def instance = toInstance(wrapMethodInClass("""
             int "3 plus 5"() {
-                gq(3 + 5)
+                q(3 + 5)
             }
         """))
 
@@ -45,7 +45,7 @@ class GqSupportTest extends BaseSpecification {
         setup:
         def instance = toInstance(wrapMethodInClass(
                 """int test() {
-                  |    return gq(1 +
+                  |    return q(1 +
                   |         2 +
                   |         3)
             }
@@ -63,7 +63,7 @@ class GqSupportTest extends BaseSpecification {
         setup:
         def instance = toInstance(wrapMethodInClass(
                 """int sum(one, two, three) {
-                  |    return gq(one +
+                  |    return q(one +
                   |         two +
                   |         three)
             }
@@ -80,7 +80,7 @@ class GqSupportTest extends BaseSpecification {
     def "Should write method call expression statement and the evaluated expression"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            int nested1(int value) { gq(nested2(value)) }
+            int nested1(int value) { q(nested2(value)) }
             int nested2(int value) { return value }
         """))
 
@@ -95,7 +95,7 @@ class GqSupportTest extends BaseSpecification {
     def "Should be able to be used in standalone Groovy script"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
-            gq(1 + 1)
+            q(1 + 1)
         """))
 
         when:
@@ -111,7 +111,7 @@ class GqSupportTest extends BaseSpecification {
         setup:
         def instance = toInstance(insertPackageAndImport("""
             void nothing(args) {}
-            gq(nothing(5))
+            q(nothing(5))
         """))
 
         when:
@@ -126,7 +126,7 @@ class GqSupportTest extends BaseSpecification {
     def "Should be able to be called nested-ly"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
-            gq(gq(gq(5) + 5) + 5) + 5
+            q(q(q(5) + 5) + 5) + 5
         """))
 
         when:
@@ -135,8 +135,8 @@ class GqSupportTest extends BaseSpecification {
         then:
         fileContentEquals gqFile,
                 """run: 5=5
-                  |run: gq(5) + 5=10
-                  |run: gq(gq(5) + 5) + 5=15
+                  |run: q(5) + 5=10
+                  |run: q(q(5) + 5) + 5=15
                   |""".stripMargin()
     }
 
@@ -150,10 +150,10 @@ class GqSupportTest extends BaseSpecification {
 
         where:
         input                 || result
-        "gq | 3 + 5 "         || "3 + 5=8"
-        "gq|2+2"              || "2 + 2=4"
-        "3 + (gq | 5)"        || "5=5"
-        "true && gq | 'test'" || "'test'='test'"
+        "q | 3 + 5 "         || "3 + 5=8"
+        "q|2+2"              || "2 + 2=4"
+        "3 + (q | 5)"        || "5=5"
+        "true && q | 'test'" || "'test'='test'"
     }
 
     @Unroll
@@ -166,26 +166,26 @@ class GqSupportTest extends BaseSpecification {
 
         where:
         input                   || result
-        "gq / 3 + 5 "           || "3=3"
-        "1 + gq / 1"            || "1=1"
-        "'test' && gq / 'test'" || "'test'='test'"
+        "q / 3 + 5 "           || "3=3"
+        "1 + q / 1"            || "1=1"
+        "'test' && q / 'test'" || "'test'='test'"
     }
 
     def "Should be able to use all operators at the same time"() {
         when:
-        execute 'gq | gq / 1 + gq(2)'
+        execute 'q | q / 1 + q(2)'
 
         then:
         fileContentEquals gqFile,
                 """test: 1=1
                   |test: 2=2
-                  |test: gq / 1 + gq(2)=3
+                  |test: q / 1 + q(2)=3
                   |""".stripMargin()
     }
 
     def "Should not hit unexpected exception when gq is used wrongly"() {
         when:
-        execute("1 + gq | 1")
+        execute("1 + q | 1")
 
         then:
         Throwable exception = thrown(MissingMethodException)

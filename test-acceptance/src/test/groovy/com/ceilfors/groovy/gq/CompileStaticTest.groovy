@@ -21,12 +21,12 @@ package com.ceilfors.groovy.gq
  */
 class CompileStaticTest extends BaseSpecification {
 
-    def "GqSupport should be able to be used in conjunction with CompileStatic method"() {
+    def "q should be able to be used in conjunction with CompileStatic method"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
             @groovy.transform.CompileStatic
             public String compileStatic() {
-                return gq("static!")
+                return q("static!")
             }
         """))
 
@@ -38,13 +38,13 @@ class CompileStaticTest extends BaseSpecification {
 
     }
 
-    def "GqSupport should be able to be used in conjunction with CompileStatic class"() {
+    def "q should be able to be used in conjunction with CompileStatic class"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
             @groovy.transform.CompileStatic
             class Test {
                 public String compileStatic() {
-                    return gq("static!")
+                    return q("static!")
                 }
             }
         """))
@@ -56,10 +56,10 @@ class CompileStaticTest extends BaseSpecification {
         result == "static!"
     }
 
-    def "Gq should be able to be used in conjunction with CompileStatic method"() {
+    def "@q should be able to be used in conjunction with CompileStatic method"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
-            @gt
+            @q
             @groovy.transform.CompileStatic
             public String compileStatic() {
                 return "static!"
@@ -75,12 +75,12 @@ class CompileStaticTest extends BaseSpecification {
 
     }
 
-    def "Gq should be able to be used in conjunction with CompileStatic class"() {
+    def "@q should be able to be used in conjunction with CompileStatic class"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
             @groovy.transform.CompileStatic
             class Test {
-                @gt
+                @q
                 public String compileStatic() {
                     return "static!"
                 }
