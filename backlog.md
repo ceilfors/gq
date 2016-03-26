@@ -10,9 +10,6 @@ This file must be moved to github issue tracker once we hit 0.1.0
 - Remove unused methodName at expressionProcessed
 - Verify the best condition to remove parentheses when | is used
 
-# Bug 
-- 0.1.0 Exception when gq(gq(5))
-
 # Feature
 - Allow alias to be overridden
 - 0.1.0 @Gq Exception - Test - nestedException1 catch exception from nestedexception2 and throw again. Indentation must stay the same.

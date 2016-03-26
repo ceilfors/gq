@@ -31,12 +31,14 @@ import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.StaticMethodCallExpression
 import org.codehaus.groovy.control.CompilePhase
-import org.codehaus.groovy.control.Janitor
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.runtime.MethodClosure
+import org.codehaus.groovy.syntax.Types
 import org.codehaus.groovy.transform.ASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 
+import static SourceUnitUtils.lookupBinary
+import static SourceUnitUtils.lookupText
 import static org.codehaus.groovy.ast.tools.GeneralUtils.args
 import static org.codehaus.groovy.ast.tools.GeneralUtils.classX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
@@ -47,6 +49,8 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 class GqSupportTransformation implements ASTTransformation {
 
+    private static final GQ_SUPPORT = ClassHelper.make(GqSupport)
+
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
         def final transformer = new GqSupportTransformer(sourceUnit)
@@ -55,15 +59,25 @@ class GqSupportTransformation implements ASTTransformation {
         }
     }
 
-    private class GqSupportTransformer extends ClassCodeExpressionTransformer {
+    /**
+     * This <tt>ExpressionTransformer</tt> traps interactions to GqSupport object and
+     * reroute the interaction to CodeFlowListeners.
+     *
+     * @author ceilfors
+     */
+    class GqSupportTransformer extends ClassCodeExpressionTransformer {
 
         private SourceUnit sourceUnit
 
         private String currentMethodName
 
-        GqSupportTransformer(SourceUnit sourceUnit, String initialMethodName = null) {
+        GqSupportTransformer(SourceUnit sourceUnit) {
             this.sourceUnit = sourceUnit
-            this.currentMethodName = initialMethodName
+        }
+
+        @Override
+        protected SourceUnit getSourceUnit() {
+            return sourceUnit
         }
 
         @Override
@@ -75,26 +89,27 @@ class GqSupportTransformation implements ASTTransformation {
         @Override
         Expression transform(Expression expression) {
             if (isGqSupportExpression(expression) && expression.method == getGqSupportAlias()) {
-                // Traps normal method call to GqSupport and reroute to CodeFlowListeners
-                def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
-                originalArg = this.transform(originalArg)
-                return callExpressionProcessed(currentMethodName, newExpressionInfo(currentMethodName, originalArg))
+                return transformCall(expression as StaticMethodCallExpression)
             }
 
             if (expression instanceof BinaryExpression
                     && isGqSupportExpression(expression.leftExpression)
-                    && expression.operation.text in ['/', '|']) { // Gq/ or Gq|
-                Expression actualOperation = expression.rightExpression
-                String text = lookupText(actualOperation)
-                actualOperation = this.transform(actualOperation)
-                return callExpressionProcessed(currentMethodName, newExpressionInfo(currentMethodName, actualOperation, text))
+                    && expression.operation.type in [Types.PIPE, Types.DIVIDE]) {
+                return transformOperator(expression)
             }
             return super.transform(expression)
         }
 
-        @Override
-        protected SourceUnit getSourceUnit() {
-            return sourceUnit
+        Expression transformCall(StaticMethodCallExpression expression) {
+            def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
+            String text = lookupText(sourceUnit, originalArg)
+            return callExpressionProcessed(currentMethodName, newExpressionInfo(originalArg.transformExpression(this), text))
+        }
+
+        Expression transformOperator(BinaryExpression expression) {
+            Expression actualOperation = expression.rightExpression
+            String text = lookupBinary(sourceUnit, actualOperation)
+            return callExpressionProcessed(currentMethodName, newExpressionInfo(actualOperation.transformExpression(this), text))
         }
 
         private boolean isGqSupportExpression(Expression expression) {
@@ -111,46 +126,12 @@ class GqSupportTransformation implements ASTTransformation {
                     args(constX(methodName), expressionInfo))
         }
 
-        private ConstructorCallExpression newExpressionInfo(String methodName, Expression x) {
-            def text = lookup(sourceUnit, x)
-            new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
-        }
-
-        private ConstructorCallExpression newExpressionInfo(String methodName, Expression x, String text) {
-            new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(methodName), constX(text), x))
+        private ConstructorCallExpression newExpressionInfo(Expression x, String text) {
+            new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(currentMethodName), constX(text), x))
         }
 
         private getGqSupportAlias() {
-            sourceUnit.AST.staticImports.values().find { it.fieldName == 'gq' && it.type == ClassHelper.make(GqSupport) }.alias
+            sourceUnit.AST.staticImports.values().find { it.fieldName == 'gq' && it.type == GQ_SUPPORT }.alias
         }
-
-        private String lookupText(ASTNode node) {
-            if (node instanceof BinaryExpression) {
-                return lookupText(node.leftExpression) + " " +
-                        lookup(sourceUnit, node) + " " +
-                        lookupText(node.rightExpression)
-            }
-            return lookup(sourceUnit, node)
-        }
-    }
-
-    private static String lookup(SourceUnit sourceUnit, ASTNode node) {
-        Janitor janitor = new Janitor()
-        StringBuilder text = new StringBuilder()
-        for (int i = node.lineNumber; i <= node.lastLineNumber; i++) {
-            String currentLine = sourceUnit.getSample(i, 0, janitor)
-            if (i == node.lineNumber && i == node.lastLineNumber) {
-                text.append(currentLine.substring(node.columnNumber - 1, node.lastColumnNumber - 1))
-            } else if (i == node.lineNumber) {
-                text.append(currentLine.substring(node.columnNumber - 1))
-                text.append('\n')
-            } else if (i == node.lastLineNumber) {
-                text.append(currentLine.substring(0, node.lastColumnNumber - 1))
-            } else {
-                text.append(currentLine)
-                text.append('\n')
-            }
-        }
-        return text.toString().trim()
     }
 }
