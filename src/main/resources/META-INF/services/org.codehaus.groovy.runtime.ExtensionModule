@@ -16,4 +16,4 @@
 
 moduleName = @name@
 moduleVersion = @version@
-extensionClasses = com.ceilfors.transform.gq.ansi.JansiExtension
+extensionClasses = com.ceilfors.groovy.gq.ansi.JansiExtension
