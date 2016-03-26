@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq
+package com.ceilfors.transform.gq.codeflow
 
 /**
  * @author ceilfors
  */
-class ExpressionInfo {
+class ExceptionInfo {
 
     String methodName
-    String text
-    Object value
+    Throwable exception
 
-    ExpressionInfo(String methodName, String text, Object value) {
+    ExceptionInfo(String methodName, Throwable exception) {
         this.methodName = methodName
-        this.text = text
-        this.value = value
+        this.exception = exception
     }
 }

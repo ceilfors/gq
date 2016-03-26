@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq
+package com.ceilfors.transform.gq.codeflow
 
 /**
  * @author ceilfors
  */
-interface CodeFlowPrinter {
+class ExpressionInfo {
 
-    void printMethodStart(MethodInfo methodInfo)
+    String methodName
+    String text
+    Object value
 
-    void printMethodEnd()
-
-    void printMethodEnd(Object result)
-
-    void printExpression(ExpressionInfo expressionInfo)
-
-    void print(String string)
-
-    void printException(ExceptionInfo exceptionInfo)
+    ExpressionInfo(String methodName, String text, Object value) {
+        this.methodName = methodName
+        this.text = text
+        this.value = value
+    }
 }

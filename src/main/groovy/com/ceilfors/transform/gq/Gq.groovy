@@ -16,6 +16,8 @@
 
 package com.ceilfors.transform.gq
 
+import com.ceilfors.transform.gq.codeflow.ExceptionInfo
+import com.ceilfors.transform.gq.codeflow.MethodInfo
 import com.github.yihtserns.groovy.decorator.MethodDecorator
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 

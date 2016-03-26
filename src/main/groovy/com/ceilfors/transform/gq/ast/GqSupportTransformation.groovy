@@ -16,7 +16,7 @@
 
 package com.ceilfors.transform.gq.ast
 
-import com.ceilfors.transform.gq.ExpressionInfo
+import com.ceilfors.transform.gq.codeflow.ExpressionInfo
 import com.ceilfors.transform.gq.GqSupport
 import com.ceilfors.transform.gq.SingletonCodeFlowManager
 import org.codehaus.groovy.ast.ASTNode

@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq
+package com.ceilfors.transform.gq.codeflow
+
+import groovy.transform.ToString
 
 /**
  * @author ceilfors
  */
-class ExceptionInfo {
+@ToString
+class MethodInfo {
 
-    String methodName
-    Throwable exception
+    String name
+    List<Object> args
 
-    ExceptionInfo(String methodName, Throwable exception) {
-        this.methodName = methodName
-        this.exception = exception
+    MethodInfo(String name, List<Object> args) {
+        this.name = name
+        this.args = args
     }
 }

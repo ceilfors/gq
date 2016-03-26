@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.ceilfors.transform.gq
-
-import groovy.transform.ToString
-
+package com.ceilfors.transform.gq.codeflow
 /**
  * @author ceilfors
  */
-@ToString
-class MethodInfo {
+interface CodeFlowPrinter {
 
-    String name
-    List<Object> args
+    void printMethodStart(MethodInfo methodInfo)
 
-    MethodInfo(String name, List<Object> args) {
-        this.name = name
-        this.args = args
-    }
+    void printMethodEnd()
+
+    void printMethodEnd(Object result)
+
+    void printExpression(ExpressionInfo expressionInfo)
+
+    void print(String string)
+
+    void printException(ExceptionInfo exceptionInfo)
 }
