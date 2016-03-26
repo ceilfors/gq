@@ -30,7 +30,7 @@ class GqSupport {
      * @return the original value of the expression to help method chaining
      */
     def <T> T call(T value) {
-        throw new IllegalStateException("Gq bug! The method [gq($value)] should not be called on runtime!")
+        throw exception("gq($value)")
     }
 
     /**
@@ -40,7 +40,7 @@ class GqSupport {
      * @return the original value of the expression to help method chaining
      */
     def <T> T div(T value) {
-        throw new IllegalStateException("Gq bug! The method [gq / $value] should not be called on runtime!")
+        throw exception("gq / $value")
     }
 
     /**
@@ -50,6 +50,10 @@ class GqSupport {
      * @return the original value of the expression to help method chaining
      */
     def <T> T or(T value) {
-        throw new IllegalStateException("Gq bug! The method [gq | $value] should not be called on runtime!")
+        throw exception("gq | $value")
+    }
+
+    Throwable exception(String method) {
+        new IllegalStateException("GQ BUG! Please log a bug to the developers. The method [$method] should not have been called on runtime!")
     }
 }
