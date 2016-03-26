@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 
-com.ceilfors.groovy.gq.ast.GqSupportTransformation
+com.ceilfors.groovy.gq.ast.GqASTTransformation
 com.ceilfors.groovy.gq.ast.AutoImportASTTransformation

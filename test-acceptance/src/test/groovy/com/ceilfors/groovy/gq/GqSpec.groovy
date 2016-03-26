@@ -23,7 +23,7 @@ import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
 /**
  * @author ceilfors
  */
-class GqSupportTest extends BaseSpecification {
+class GqSpec extends BaseSpecification {
 
     def "Should write variable expression statement and the evaluated expression"() {
         setup:

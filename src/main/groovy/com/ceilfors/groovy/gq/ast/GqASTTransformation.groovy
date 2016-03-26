@@ -46,23 +46,23 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
  * @author ceilfors
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
-class GqSupportTransformation implements ASTTransformation {
+class GqASTTransformation implements ASTTransformation {
 
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
-        def final transformer = new GqSupportTransformer(sourceUnit)
+        def final transformer = new GqTransformer(sourceUnit)
         for (ClassNode classNode : sourceUnit.AST.classes) {
             transformer.visitClass(classNode)
         }
     }
 
-    class GqSupportTransformer extends ClassCodeExpressionTransformer {
+    class GqTransformer extends ClassCodeExpressionTransformer {
 
         private SourceUnit sourceUnit
 
         private String currentMethodName
 
-        GqSupportTransformer(SourceUnit sourceUnit) {
+        GqTransformer(SourceUnit sourceUnit) {
             this.sourceUnit = sourceUnit
         }
 

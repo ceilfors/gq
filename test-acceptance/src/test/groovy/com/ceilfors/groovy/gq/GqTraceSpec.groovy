@@ -18,7 +18,7 @@ package com.ceilfors.groovy.gq
 
 import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
 
-class GqTest extends BaseSpecification {
+class GqTraceSpec extends BaseSpecification {
 
     def "Should write the name of a method with empty parameter"() {
         setup:
