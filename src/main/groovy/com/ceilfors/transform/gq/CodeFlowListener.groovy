@@ -45,9 +45,9 @@ interface CodeFlowListener {
 
     /**
      * Called when an expression has just been processed
-     * @param methodName the method name where this expression is currently in
+     *
      * @param expressionInfo the expression information
      * @return the expression result, useful for method chaining
      */
-    Object expressionProcessed(String methodName, ExpressionInfo expressionInfo)
+    Object expressionProcessed(ExpressionInfo expressionInfo)
 }
