@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-moduleName = com.ceilfors.groovy.spock-helper
-moduleVersion = 0.1
+moduleName = @name@
+moduleVersion = @version@
 extensionClasses = com.ceilfors.groovy.spock.MatcherExtension

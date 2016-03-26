@@ -1,17 +1,9 @@
-apply plugin: 'groovy'
-
-repositories {
-    jcenter()
-}
-
 configurations {
     ivy
 }
 
 dependencies {
     ivy "org.apache.ivy:ivy:2.3.0"
-    compile 'org.codehaus.groovy:groovy-all:2.4.5'
-    testCompile 'junit:junit:4.12'
 }
 
 tasks.withType(GroovyCompile) {

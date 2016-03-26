@@ -5,8 +5,6 @@ This file must be moved to github issue tracker once we hit 0.1.0
 # Technical debt
 - Rename package to com.ceilfors.groovy instead of transform.
 - Remove ast layer in test case
-- Move common repositories settings in submodule to parent
-- Use ResourceFilter in spock-helper for ExtensionModules.
 - Remove unused methodName at expressionProcessed
 - Verify the best condition to remove parentheses when | is used
 

@@ -1,44 +1,57 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply plugin: 'groovy'
-apply plugin: 'maven'
+allprojects {
+    apply plugin: 'groovy'
 
-group = 'com.ceilfors.groovy'
+    group = 'com.ceilfors.groovy'
 
-repositories {
-    jcenter()
-}
+    repositories {
+        jcenter()
+    }
 
-configurations {
-    provided
-}
+    configurations {
+        provided
+    }
 
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-        test.compileClasspath += configurations.provided
-        test.runtimeClasspath += configurations.provided
+    sourceSets {
+        main {
+            compileClasspath += configurations.provided
+            test.compileClasspath += configurations.provided
+            test.runtimeClasspath += configurations.provided
+        }
+    }
+
+    dependencies {
+        testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+        testCompile 'cglib:cglib-nodep:3.2.1'
+        testCompile 'junit:junit:4.12'
+    }
+
+    processResources {
+        filter ReplaceTokens, tokens: [
+                "version": project.property("version"),
+                "name": project.property("name"),
+        ]
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.10'
     }
 }
+
+subprojects {
+    dependencies {
+        compile 'org.codehaus.groovy:groovy-all:2.4.5'
+    }
+}
+
+apply plugin: 'maven'
 
 dependencies {
     provided 'org.codehaus.groovy:groovy-all:2.4.5'
     compile 'com.github.yihtserns:groovy-decorator:0.0.4'
     compile 'org.fusesource.jansi:jansi:1.11'
-
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
-        exclude group: 'org.codehaus.groovy'
-    }
-    testCompile 'cglib:cglib-nodep:3.2.1'
-    testCompile 'junit:junit:4.12'
     testCompile project(':spock-helper')
-}
-
-processResources {
-    filter ReplaceTokens, tokens: [
-            "version": project.property("version"),
-            "name": project.property("name"),
-    ]
 }
 
 test {
