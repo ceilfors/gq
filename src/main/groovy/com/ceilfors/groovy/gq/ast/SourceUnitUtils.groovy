@@ -45,6 +45,14 @@ class SourceUnitUtils {
         }
     }
 
+    /**
+     * Lookup for the real source code text. This method is more accurate than calling <tt>expression.getText</tt> as
+     * it is really grabbing the text from the source code.
+     *
+     * @param sourceUnit the source unit
+     * @param node the node which text to be looked up
+     * @return the representation of the text in source code
+     */
     static String lookupText(SourceUnit sourceUnit, ASTNode node) {
         Janitor janitor = new Janitor()
         StringBuilder text = new StringBuilder()
@@ -67,6 +75,13 @@ class SourceUnitUtils {
         text.toString().trim()
     }
 
+    /**
+     * Searches the alias for a particular class import.
+     *
+     * @param sourceUnit the source unit
+     * @param clazz the class which alias to be searched
+     * @return the alias if the SourceUnit imports the searched class, otherwise null
+     */
     static String getImportAlias(SourceUnit sourceUnit, Class clazz) {
         ImportNode importNode = sourceUnit.AST.imports.find { it.type == ClassHelper.make(clazz) }
         importNode ? importNode.alias : null

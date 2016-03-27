@@ -25,6 +25,14 @@ import static org.fusesource.jansi.Ansi.ansi
  */
 class JansiExtension {
 
+    /**
+     * Returns the ANSI colored version of the String. Jansi must be enabled by calling <tt>Ansi.setEnabled(true)</tt>,
+     * otherwise this method will just return the original String.
+     *
+     * @param self the String to be ANSI colored
+     * @param color the color
+     * @return the colored String
+     */
     static final String ansi(String self, Color color) {
         ansi().fg(color).a(self).reset().toString()
     }

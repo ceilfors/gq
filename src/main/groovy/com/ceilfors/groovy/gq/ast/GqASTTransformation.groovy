@@ -45,7 +45,11 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.classX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.ctorX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
+
 /**
+ * A global AST transformation that transforms <tt>q()</tt>, <tt>q/</tt>, <tt>q|</tt> to fire events to
+ * <tt>CodeFlowManager</tt>
+ *
  * @author ceilfors
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
