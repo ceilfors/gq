@@ -10,17 +10,15 @@ Quick and dirty debugging output for Groovy.
 
 # Quick Start
 
-```groovy
-@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0-SNAPSHOT') // 1. Get dependency!
 ```
-```
-import gq.Gq as q // 2. Import the q and get ready
+@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0') // 1. Get dependency!
+import gq.Gq as q // 2. Import q and get ready
 ```
 ```groovy
 def me() { 'world' }
 def greet() { 'hello' }
 
-// 3. Use q(), q|, q/  to print values without temporary variable. See the output in the next section.
+// 3. Use q(), q|, q/  to print values without temporary variable. Check the differences from the output below.
 println([greet(), q(me() + ' !')].join(' '))
 println([greet(), q/me() + ' !'].join(' '))
 println(q|[greet(), me() + ' !'].join(' '))
@@ -32,7 +30,23 @@ println(greeter([greet(), me()]))
 ```
 
 Output
+
 ![gq output](doc/quick-start-output-75.png?raw=true "gq output")
+
+# Configuration via System Properties
+
+- gq.tmp
+  Default: /tmp
+  Configures where gq should be putting gq files
+
+- gq.color
+  Default: true
+  Set true to print ANSI color to make /tmp/gq console friendly.
+
+# gq files
+
+- gq
+- gq000-111-222.txt
 
 # Credits
 
