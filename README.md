@@ -10,24 +10,30 @@ Quick and dirty debugging output for Groovy.
 
 # Quick Start
 
-Source code
 ```groovy
-@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0') // 1. Get the dependency!
-import gq.Gq as q // 2. Import the class
+@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0-SNAPSHOT') // 1. Get dependency!
+```
+```
+import gq.Gq as q // 2. Import the q and get ready
+```
+```groovy
+def me() { 'world' }
+def greet() { 'hello' }
 
-def who() { "world" }
-def greet() { "hello" }
+// 3. Use q(), q|, q/  to print values without temporary variable. See the output in the next section.
+println([greet(), q(me() + ' !')].join(' '))
+println([greet(), q/me() + ' !'].join(' '))
+println(q|[greet(), me() + ' !'].join(' '))
 
-@q // 3. Annotate a method to get trace of method calls
-def welcome(arg) {
-    return "${q(greet())} $arg !!" // 4. Use q() to capture the expression in the parentheses
-}
+@q // 4. Annotate a method to get trace of method calls
+def greeter(args) { args << '!'; args.join(' ') }
 
-// 5. Use q | to capture all expressions on the right of the operator
-// 6. Use q / to capture a single expression
-q | welcome(q / who())
+println(greeter([greet(), me()]))
 ```
 
 Output
-![gq output](docs/quick-start-output-75.png?raw=true "gq output")
+![gq output](doc/quick-start-output-75.png?raw=true "gq output")
 
+# Credits
+
+Heavily inspired by https://github.com/zestyping/q
