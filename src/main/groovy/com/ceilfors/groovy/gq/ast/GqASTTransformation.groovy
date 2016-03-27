@@ -122,9 +122,5 @@ class GqASTTransformation implements ASTTransformation {
         private ConstructorCallExpression newExpressionInfo(Expression x, String text) {
             new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(currentMethodName), constX(text), x))
         }
-
-        private getGqAlias() {
-            sourceUnit.AST.imports.find { it.type == ClassHelper.make(Gq) }.alias
-        }
     }
 }
