@@ -17,6 +17,7 @@
 package com.ceilfors.groovy.gq.ast
 
 import org.codehaus.groovy.ast.ASTNode
+import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.control.Janitor
 import org.codehaus.groovy.control.SourceUnit
@@ -58,5 +59,10 @@ class SourceUnitUtils {
             }
         }
         return text.toString().trim()
+    }
+
+    public static String getImportAlias(SourceUnit sourceUnit, Class clazz) {
+        def importNode = sourceUnit.AST.imports.find { it.type == ClassHelper.make(clazz) }
+        return importNode ? importNode.alias : null
     }
 }

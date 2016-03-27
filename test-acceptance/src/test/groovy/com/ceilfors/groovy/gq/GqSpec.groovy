@@ -119,19 +119,6 @@ class GqSpec extends BaseSpecification {
         fileContentEquals gqFile, "nested1: nested2(value)=5\n"
     }
 
-    def "Should be able to be used in standalone Groovy script"() {
-        setup:
-        def instance = toInstance(insertPackageAndImport("q(1 + 1)"))
-
-        when:
-        instance.main()
-
-        then:
-        fileContentEquals gqFile,
-                """run: 1 + 1=2
-                  |""".stripMargin()
-    }
-
     def "Should be able to gracefully accept void method call expression"() {
         setup:
         def instance = toInstance(insertPackageAndImport("""
@@ -179,5 +166,38 @@ class GqSpec extends BaseSpecification {
         then:
         Throwable exception = thrown(MissingMethodException)
         exception.message.contains('java.lang.Integer.plus()')
+    }
+
+    def "Should be able to be used in standalone Groovy script"() {
+        setup:
+        def instance = toInstance(insertPackageAndImport("q(1 + 1)"))
+
+        when:
+        instance.main()
+
+        then:
+        fileContentEquals gqFile,
+                """run: 1 + 1=2
+                  |""".stripMargin()
+    }
+
+    def "Should be able to override import alias if necessary"() {
+        setup:
+        def instance = toInstance("""
+            import com.ceilfors.groovy.gq.Gq as gq
+
+            def q() {
+                return "my own method"
+            }
+            gq(q())
+        """)
+
+        when:
+        instance.main()
+
+        then:
+        fileContentEquals gqFile,
+                """run: q()='my own method'
+                  |""".stripMargin()
     }
 }

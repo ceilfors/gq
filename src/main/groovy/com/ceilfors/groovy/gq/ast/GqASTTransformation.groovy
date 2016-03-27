@@ -38,6 +38,7 @@ import org.codehaus.groovy.transform.GroovyASTTransformation
 
 import static SourceUnitUtils.lookupBinary
 import static SourceUnitUtils.lookupText
+import static com.ceilfors.groovy.gq.ast.SourceUnitUtils.getImportAlias
 import static org.codehaus.groovy.ast.tools.GeneralUtils.args
 import static org.codehaus.groovy.ast.tools.GeneralUtils.classX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
@@ -79,7 +80,7 @@ class GqASTTransformation implements ASTTransformation {
 
         @Override
         Expression transform(Expression expression) {
-            if (expression instanceof MethodCallExpression && expression.methodAsString == getGqAlias()) {
+            if (expression instanceof MethodCallExpression && expression.methodAsString == getImportAlias(sourceUnit, Gq)) {
                 return transformCall(expression as MethodCallExpression)
             }
 
@@ -93,6 +94,11 @@ class GqASTTransformation implements ASTTransformation {
 
         Expression transformCall(MethodCallExpression expression) {
             def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
+            if (!originalArg) {
+                addError("gq must have at least 1 argument!", expression)
+                return null
+            }
+
             String text = lookupText(sourceUnit, originalArg)
             return callExpressionProcessed(newExpressionInfo(originalArg.transformExpression(this), text))
         }

@@ -24,6 +24,8 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.ASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 
+import static com.ceilfors.groovy.gq.ast.SourceUnitUtils.getImportAlias
+
 /**
  * @author ceilfors
  */
@@ -32,6 +34,8 @@ class AutoImportASTTransformation implements ASTTransformation {
 
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
-        sourceUnit.getAST().addImport("q", ClassHelper.make(Gq))
+        if (!getImportAlias(sourceUnit, Gq)) {
+            sourceUnit.getAST().addImport("q", ClassHelper.make(Gq))
+        }
     }
 }
