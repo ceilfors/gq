@@ -16,8 +16,7 @@
 
 package com.ceilfors.groovy.gq
 
-import com.ceilfors.groovy.gq.codeflow.ExceptionInfo
-import com.ceilfors.groovy.gq.codeflow.MethodInfo
+import com.github.yihtserns.groovy.decorator.Function
 import com.github.yihtserns.groovy.decorator.MethodDecorator
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 
@@ -29,24 +28,9 @@ import java.lang.annotation.Target
 /**
  * @author ceilfors
  */
-@MethodDecorator({ func ->
-    boolean voidReturnType = func.returnType == void
-
+@MethodDecorator({ Function func ->
     return { args ->
-        SingletonCodeFlowManager.INSTANCE.methodStarted(new MethodInfo(func.name, args))
-
-        try {
-            Object result = func(args)
-            if (voidReturnType) {
-                SingletonCodeFlowManager.INSTANCE.methodEnded()
-            } else {
-                SingletonCodeFlowManager.INSTANCE.methodEnded(result)
-            }
-            return result
-        } catch (Throwable e) {
-            SingletonCodeFlowManager.INSTANCE.exceptionThrown(new ExceptionInfo(func.name, e))
-            throw e
-        }
+        GqTraceDecorator.trace(func, args)
     }
 })
 @GroovyASTTransformationClass('com.github.yihtserns.groovy.decorator.DecoratorASTTransformation')

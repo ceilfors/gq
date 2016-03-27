@@ -158,7 +158,7 @@ ruleset {
     CatchIndexOutOfBoundsException
     CatchNullPointerException
     CatchRuntimeException
-//    CatchThrowable
+    CatchThrowable
     ConfusingClassNamedException
     ExceptionExtendsError
     ExceptionExtendsThrowable
