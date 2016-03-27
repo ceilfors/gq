@@ -20,7 +20,7 @@ import spock.lang.Requires
 /**
  * @author ceilfors
  */
-class FileFormatTest extends BaseSpecification {
+class FileFormatSpec extends BaseSpecification {
 
     def instance
 

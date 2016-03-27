@@ -25,37 +25,66 @@ import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
  */
 class GqSpec extends BaseSpecification {
 
-    def "Should write variable expression statement and the evaluated expression"() {
-        setup:
-        def instance = toInstance(wrapMethodInClass("""
-            int "3 plus 5"() {
-                q(3 + 5)
-            }
-        """))
-
+    def "Should return the expression value"() {
         when:
-        def result = instance."3 plus 5"()
+        def result = execute "q(1 + 1)"
 
         then:
-        result == 8
-        fileContentEquals gqFile, "3 plus 5: 3 + 5=8\n"
+        result == 2
+    }
+
+    @Unroll
+    def "Should be able to use CALL method: #input"() {
+        when:
+        execute input
+
+        then:
+        fileContentEquals gqFile, "test: $result\n"
+
+        where:
+        input      || result
+        "q(3 + 5)" || "3 + 5=8"
+        "2+q(2)"   || "2=2"
+    }
+
+    @Unroll
+    def "Should be able to use OR operator: #input"() {
+        when:
+        execute input
+
+        then:
+        fileContentEquals gqFile, "test: $result\n"
+
+        where:
+        input                || result
+        "q | 3 + 5 "         || "3 + 5=8"
+        "q|2+2"              || "2 + 2=4"
+        "3 + (q | 5)"        || "5=5"
+        "true && q | 'test'" || "'test'='test'"
+    }
+
+    @Unroll
+    def "Should be able to use DIV operator: #input"() {
+        when:
+        execute input
+
+        then:
+        fileContentEquals gqFile, "test: $result\n"
+
+        where:
+        input                  || result
+        "q / 3 + 5 "           || "3=3"
+        "1 + q / 1"            || "1=1"
+        "'test' && q / 'test'" || "'test'='test'"
     }
 
     def "Should convert multi line variable expression to one line"() {
-        setup:
-        def instance = toInstance(wrapMethodInClass(
-                """int test() {
-                  |    return q(1 +
-                  |         2 +
-                  |         3)
-            }
-        """))
-
         when:
-        def result = instance.test()
+        execute """q(1 +
+                  |         2 +
+                  |         3)"""
 
         then:
-        result == 6
         fileContentEquals gqFile, "test: 1 +         2 +         3=6\n"
     }
 
@@ -70,10 +99,9 @@ class GqSpec extends BaseSpecification {
         """))
 
         when:
-        def result = instance.sum(1, 2, 3)
+        instance.sum(1, 2, 3)
 
         then:
-        result == 6
         fileContentEquals gqFile, "sum: one +         two +         three=6\n"
     }
 
@@ -85,18 +113,15 @@ class GqSpec extends BaseSpecification {
         """))
 
         when:
-        def result = instance.nested1(5)
+        instance.nested1(5)
 
         then:
-        result == 5
         fileContentEquals gqFile, "nested1: nested2(value)=5\n"
     }
 
     def "Should be able to be used in standalone Groovy script"() {
         setup:
-        def instance = toInstance(insertPackageAndImport("""
-            q(1 + 1)
-        """))
+        def instance = toInstance(insertPackageAndImport("q(1 + 1)"))
 
         when:
         instance.main()
@@ -124,51 +149,15 @@ class GqSpec extends BaseSpecification {
     }
 
     def "Should be able to be called nested-ly"() {
-        setup:
-        def instance = toInstance(insertPackageAndImport("""
-            q(q(q(5) + 5) + 5) + 5
-        """))
-
         when:
-        instance.main()
+        execute 'q(q(q(5) + 5) + 5) + 5'
 
         then:
         fileContentEquals gqFile,
-                """run: 5=5
-                  |run: q(5) + 5=10
-                  |run: q(q(5) + 5) + 5=15
+                """test: 5=5
+                  |test: q(5) + 5=10
+                  |test: q(q(5) + 5) + 5=15
                   |""".stripMargin()
-    }
-
-    @Unroll
-    def "Should be able to use OR operator: #input"() {
-        when:
-        execute input
-
-        then:
-        fileContentEquals gqFile, "test: $result\n"
-
-        where:
-        input                 || result
-        "q | 3 + 5 "         || "3 + 5=8"
-        "q|2+2"              || "2 + 2=4"
-        "3 + (q | 5)"        || "5=5"
-        "true && q | 'test'" || "'test'='test'"
-    }
-
-    @Unroll
-    def "Should be able to use DIV operator: #input"() {
-        when:
-        execute input
-
-        then:
-        fileContentEquals gqFile, "test: $result\n"
-
-        where:
-        input                   || result
-        "q / 3 + 5 "           || "3=3"
-        "1 + q / 1"            || "1=1"
-        "'test' && q / 'test'" || "'test'='test'"
     }
 
     def "Should be able to use all operators at the same time"() {
@@ -185,7 +174,7 @@ class GqSpec extends BaseSpecification {
 
     def "Should not hit unexpected exception when gq is used wrongly"() {
         when:
-        execute("1 + q | 1")
+        execute "1 + q | 1"
 
         then:
         Throwable exception = thrown(MissingMethodException)

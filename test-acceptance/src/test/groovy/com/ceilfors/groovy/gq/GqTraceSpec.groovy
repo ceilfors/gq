@@ -20,21 +20,20 @@ import static com.ceilfors.groovy.spock.FileComparisonHelper.fileContentEquals
 
 class GqTraceSpec extends BaseSpecification {
 
-    def "Should write the name of a method with empty parameter"() {
+    def "Should write the name of the method"() {
         setup:
         def instance = toInstance(wrapMethodInClass("""
             @q
-            int "return 5"() {
+            int myMethod() {
                 5
             }
         """))
 
         when:
-        def result = instance."return 5"()
+        instance.myMethod()
 
         then:
-        result == 5
-        gqFile.readLines().first().contains("return 5()")
+        gqFile.readLines().first().contains("myMethod()")
     }
 
     def "Should write the returned value of a method call"() {
@@ -47,11 +46,26 @@ class GqTraceSpec extends BaseSpecification {
         """))
 
         when:
-        def result = instance."return 5"()
+        instance."return 5"()
 
         then:
-        result == 5
         gqFile.readLines().last().contains("-> 5")
+    }
+
+    def "Should return the value of the wrapped method"() {
+        setup:
+        def instance = toInstance(wrapMethodInClass("""
+            @q
+            int myMethod() {
+                5 + 10
+            }
+        """))
+
+        when:
+        def result = instance.myMethod()
+
+        then:
+        result == 15
     }
 
     def "Should write the arguments of a method call"() {
@@ -64,10 +78,9 @@ class GqTraceSpec extends BaseSpecification {
         """))
 
         when:
-        def result = instance.add(3, 3)
+        instance.add(3, 3)
 
         then:
-        result == 6
         gqFile.readLines().first().contains("add(3, 3)")
     }
 

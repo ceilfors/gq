@@ -19,7 +19,7 @@ package com.ceilfors.groovy.gq
 /**
  * @author ceilfors
  */
-class CompileStaticTest extends BaseSpecification {
+class CompileStaticSpec extends BaseSpecification {
 
     def "q should be able to be used in conjunction with CompileStatic method"() {
         setup:

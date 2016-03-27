@@ -16,12 +16,11 @@
 
 package com.ceilfors.groovy.gq
 
-import com.ceilfors.groovy.gq.ToStringSyntaxConverter
 import spock.lang.Specification
 /**
  * @author ceilfors
  */
-class ToStringSyntaxConverterTest extends Specification {
+class ToStringSyntaxConverterSpec extends Specification {
 
     def "Should enclose in quotes"() {
         when:

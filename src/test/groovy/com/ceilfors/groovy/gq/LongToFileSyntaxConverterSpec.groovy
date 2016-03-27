@@ -16,18 +16,16 @@
 
 package com.ceilfors.groovy.gq
 
-import com.ceilfors.groovy.gq.LongToFileSyntaxConverter
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.regex.Matcher
-
 /**
  * @author ceilfors
  */
-class LongToFileSyntaxConverterTest extends Specification {
+class LongToFileSyntaxConverterSpec extends Specification {
 
     @Rule
     TemporaryFolder folder = new TemporaryFolder()
