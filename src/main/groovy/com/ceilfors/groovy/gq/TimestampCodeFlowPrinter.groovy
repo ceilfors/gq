@@ -27,18 +27,17 @@ import org.fusesource.jansi.Ansi.Color
  */
 class TimestampCodeFlowPrinter implements CodeFlowPrinter {
 
-    private CodeFlowPrinter out
-    private long startMilli
-    private Clock clock
+    private final CodeFlowPrinter out
+    private final long startMilli
+    private final Clock clock
 
-    public static interface Clock {
+    static interface Clock {
 
         long getCurrentMilli()
     }
 
-
     private long currentElapsedMilli() {
-        return clock.currentMilli - startMilli
+        clock.currentMilli - startMilli
     }
 
     TimestampCodeFlowPrinter(CodeFlowPrinter out, Clock clock) {

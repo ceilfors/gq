@@ -14,33 +14,6 @@
  * limitations under the License.
  */
 
-package com.ceilfors.groovy.gq
+ruleset {
 
-/**
- * Automatically creates a new file on every write.
- *
- * @author ceilfors
- */
-class FileCreatingWriter extends Writer implements Closeable {
-
-    private final File file
-
-    FileCreatingWriter(File file) {
-        this.file = file
-    }
-
-    @Override
-    void write(char[] cbuf, int off, int len) throws IOException {
-        file.withWriterAppend {
-            it.write(cbuf, off, len)
-        }
-    }
-
-    @Override
-    void flush() throws IOException {
-    }
-
-    @Override
-    void close() throws IOException {
-    }
 }

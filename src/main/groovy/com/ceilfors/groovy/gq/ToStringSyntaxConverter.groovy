@@ -21,11 +21,13 @@ package com.ceilfors.groovy.gq
  */
 class ToStringSyntaxConverter implements SyntaxConverter<Object, String> {
 
+    @SuppressWarnings('Instanceof') // Can't control GString inspect as it is not implemented correctly by Groovy
     @Override
     String convertExpressionValue(Object expression) {
         if (expression instanceof CharSequence) {
-            expression = expression.toString()
+            expression.toString().inspect()
+        } else {
+            expression.inspect()
         }
-        return expression.inspect()
     }
 }

@@ -21,13 +21,14 @@ import com.ceilfors.groovy.gq.codeflow.ExceptionInfo
 import com.ceilfors.groovy.gq.codeflow.ExpressionInfo
 import com.ceilfors.groovy.gq.codeflow.MethodInfo
 import org.fusesource.jansi.Ansi.Color
+
 /**
  * @author ceilfors
  */
 class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
 
-    private PrintWriter out
-    private SyntaxConverter syntaxConverter
+    private final PrintWriter out
+    private final SyntaxConverter syntaxConverter
 
     SyntaxConvertingCodeFlowPrinter(SyntaxConverter syntaxConverter, PrintWriter writer) {
         this.out = writer
@@ -55,7 +56,7 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
 
     @Override
     void printExpression(ExpressionInfo expressionInfo) {
-        out.print("${expressionInfo.methodName}: ${expressionInfo.text.replace("\n", "")}=")
+        out.print("${expressionInfo.methodName}: ${expressionInfo.text.replace('\n', '')}=")
         out.print(convertExpressionValue(expressionInfo.value))
         out.println()
     }
@@ -69,7 +70,7 @@ class SyntaxConvertingCodeFlowPrinter implements CodeFlowPrinter {
     void printException(ExceptionInfo exceptionInfo) {
         Throwable exception = exceptionInfo.exception
         String decoratedMethodName = 'decorated$' + exceptionInfo.methodName
-        def trace = exception.stackTrace.find { it.methodName == decoratedMethodName }
+        StackTraceElement trace = exception.stackTrace.find { it.methodName == decoratedMethodName }
 
         out.print("!> ${exception.class.simpleName}('${exception.message}')".ansi(Color.RED))
         out.println(" at ${trace.fileName}:${trace.lineNumber}")

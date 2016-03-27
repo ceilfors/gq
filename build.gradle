@@ -46,6 +46,16 @@ subprojects {
 }
 
 apply plugin: 'maven'
+apply plugin: 'codenarc'
+
+codenarc {
+    configFile = file('config/codenarc/rules.groovy')
+    toolVersion = '0.25.1'
+}
+
+codenarcTest {
+    configFile = file('config/codenarc/rulesTest.groovy')
+}
 
 dependencies {
     provided 'org.codehaus.groovy:groovy-all:2.4.5'

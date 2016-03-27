@@ -35,7 +35,7 @@ class AutoImportASTTransformation implements ASTTransformation {
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
         if (!getImportAlias(sourceUnit, Gq)) {
-            sourceUnit.getAST().addImport("q", ClassHelper.make(Gq))
+            sourceUnit.AST.addImport('q', ClassHelper.make(Gq))
         }
     }
 }

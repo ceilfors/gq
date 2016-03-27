@@ -23,6 +23,7 @@ import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassCodeExpressionTransformer
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.CodeVisitorSupport
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
@@ -42,7 +43,9 @@ import static com.ceilfors.groovy.gq.ast.SourceUnitUtils.getImportAlias
 import static org.codehaus.groovy.ast.tools.GeneralUtils.args
 import static org.codehaus.groovy.ast.tools.GeneralUtils.classX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
+import static org.codehaus.groovy.ast.tools.GeneralUtils.ctorX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
+
 /**
  * @author ceilfors
  */
@@ -51,7 +54,7 @@ class GqASTTransformation implements ASTTransformation {
 
     @Override
     void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
-        def final transformer = new GqTransformer(sourceUnit)
+        CodeVisitorSupport transformer = new GqTransformer(sourceUnit)
         for (ClassNode classNode : sourceUnit.AST.classes) {
             transformer.visitClass(classNode)
         }
@@ -59,7 +62,7 @@ class GqASTTransformation implements ASTTransformation {
 
     class GqTransformer extends ClassCodeExpressionTransformer {
 
-        private SourceUnit sourceUnit
+        private final SourceUnit sourceUnit
 
         private String currentMethodName
 
@@ -69,7 +72,7 @@ class GqASTTransformation implements ASTTransformation {
 
         @Override
         protected SourceUnit getSourceUnit() {
-            return sourceUnit
+            sourceUnit
         }
 
         @Override
@@ -78,9 +81,11 @@ class GqASTTransformation implements ASTTransformation {
             super.visitConstructorOrMethod(node, isConstructor)
         }
 
+        @SuppressWarnings('Instanceof')
         @Override
         Expression transform(Expression expression) {
-            if (expression instanceof MethodCallExpression && expression.methodAsString == getImportAlias(sourceUnit, Gq)) {
+            if (expression instanceof MethodCallExpression
+                    && expression.methodAsString == getImportAlias(sourceUnit, Gq)) {
                 return transformCall(expression as MethodCallExpression)
             }
 
@@ -89,38 +94,38 @@ class GqASTTransformation implements ASTTransformation {
                     && expression.operation.type in [Types.PIPE, Types.DIVIDE]) {
                 return transformOperator(expression)
             }
-            return super.transform(expression)
+            super.transform(expression)
         }
 
         Expression transformCall(MethodCallExpression expression) {
-            def originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
+            Expression originalArg = (expression.arguments as ArgumentListExpression).expressions[0]
             if (!originalArg) {
-                addError("gq must have at least 1 argument!", expression)
+                addError('gq must have at least 1 argument!', expression)
                 return null
             }
 
             String text = lookupText(sourceUnit, originalArg)
-            return callExpressionProcessed(newExpressionInfo(originalArg.transformExpression(this), text))
+            callExpressionProcessed(newExpressionInfo(originalArg.transformExpression(this), text))
         }
 
         Expression transformOperator(BinaryExpression expression) {
             Expression actualOperation = expression.rightExpression
             String text = lookupBinary(sourceUnit, actualOperation)
-            return callExpressionProcessed(newExpressionInfo(actualOperation.transformExpression(this), text))
+            callExpressionProcessed(newExpressionInfo(actualOperation.transformExpression(this), text))
         }
 
         private MethodCallExpression callExpressionProcessed(Expression expressionInfo) {
             // MethodClosure type is deliberately used for better IDE support e.g. method name refactoring, etc.
-            def methodClosure = SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure
+            MethodClosure methodClosure = SingletonCodeFlowManager.INSTANCE.&expressionProcessed as MethodClosure
 
-            return new MethodCallExpression(
-                    propX(classX(SingletonCodeFlowManager), "INSTANCE"),
+            new MethodCallExpression(
+                    propX(classX(SingletonCodeFlowManager), 'INSTANCE'),
                     methodClosure.method,
                     args(expressionInfo))
         }
 
         private ConstructorCallExpression newExpressionInfo(Expression x, String text) {
-            new ConstructorCallExpression(ClassHelper.make(ExpressionInfo), args(constX(currentMethodName), constX(text), x))
+            ctorX(ClassHelper.make(ExpressionInfo), args(constX(currentMethodName), constX(text), x))
         }
     }
 }

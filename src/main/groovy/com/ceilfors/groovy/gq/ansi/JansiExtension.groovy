@@ -26,6 +26,6 @@ import static org.fusesource.jansi.Ansi.ansi
 class JansiExtension {
 
     static final String ansi(String self, Color color) {
-        return ansi().fg(color).a(self).reset().toString()
+        ansi().fg(color).a(self).reset().toString()
     }
 }

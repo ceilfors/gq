@@ -24,12 +24,12 @@ import java.math.RoundingMode
 class LongToFileSyntaxConverter implements SyntaxConverter<String, String> {
 
     int limit = 50
-    private String separator = ".."
+    private final String separator = '..'
     File directory
-    String prefix = "gq"
+    String prefix = 'gq'
 
     void setLimit(int limit) {
-        def minimumLimit = 1 + separator.length() + 1
+        int minimumLimit = 1 + separator.length() + 1
         if (limit < minimumLimit) {
             throw new IllegalArgumentException("Minimum limit is $minimumLimit")
         }
@@ -46,20 +46,20 @@ class LongToFileSyntaxConverter implements SyntaxConverter<String, String> {
             return expression
         }
         File file = storeInFile(expression)
-        return shorten(expression) + " (file://${file.absolutePath})"
+        shorten(expression) + " (file://${file.absolutePath})"
     }
 
     private File storeInFile(String expression) {
         File file = new File(directory, "$prefix${UUID.randomUUID().toString()}.txt")
         file << expression
-        return file
+        file
     }
 
     private String shorten(String expression) {
         int leftLimit = ((limit - separator.length()) / 2).setScale(0, RoundingMode.UP)
         int rightLimit = limit - separator.length() - leftLimit
-        def left = expression.substring(0, leftLimit)
-        def right = expression.substring(expression.length() - rightLimit, expression.length())
-        return left + separator + right
+        String left = expression.substring(0, leftLimit)
+        String right = expression.substring(expression.length() - rightLimit, expression.length())
+        left + separator + right
     }
 }

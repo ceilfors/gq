@@ -25,6 +25,7 @@ import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
+
 /**
  * @author ceilfors
  */
@@ -35,22 +36,22 @@ import java.lang.annotation.Target
         SingletonCodeFlowManager.INSTANCE.methodStarted(new MethodInfo(func.name, args))
 
         try {
-            def result = func(args)
+            Object result = func(args)
             if (voidReturnType) {
                 SingletonCodeFlowManager.INSTANCE.methodEnded()
             } else {
                 SingletonCodeFlowManager.INSTANCE.methodEnded(result)
             }
             return result
-        } catch (Exception e) {
+        } catch (Throwable e) {
             SingletonCodeFlowManager.INSTANCE.exceptionThrown(new ExceptionInfo(func.name, e))
             throw e
         }
     }
 })
-@GroovyASTTransformationClass ("com.github.yihtserns.groovy.decorator.DecoratorASTTransformation")
-@Retention (RetentionPolicy.SOURCE)
-@Target ([ElementType.METHOD])
+@GroovyASTTransformationClass('com.github.yihtserns.groovy.decorator.DecoratorASTTransformation')
+@Retention(RetentionPolicy.SOURCE)
+@Target([ElementType.METHOD])
 public @interface Gq {
 
 }

@@ -18,6 +18,7 @@ package com.ceilfors.groovy.gq.ast
 
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassHelper
+import org.codehaus.groovy.ast.ImportNode
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.control.Janitor
 import org.codehaus.groovy.control.SourceUnit
@@ -32,37 +33,42 @@ class SourceUnitUtils {
      * the weird behavior of BinaryExpression where the columnNumber and lastColumnNumber properties
      * are only covering the operator e.g. lookupText(3 + 5) will return +.
      */
-    public static String lookupBinary(SourceUnit sourceUnit, ASTNode node) {
+    @SuppressWarnings('Instanceof')
+    static String lookupBinary(SourceUnit sourceUnit, ASTNode node) {
         if (node instanceof BinaryExpression) {
-            return lookupBinary(sourceUnit, node.leftExpression) + " " +
-                    lookupText(sourceUnit, node as ASTNode) + " " +
+            String space = ' ' // Could not figure out how to get the real space used in source code
+            lookupBinary(sourceUnit, node.leftExpression) + space +
+                    lookupText(sourceUnit, node as ASTNode) + space +
                     lookupBinary(sourceUnit, node.rightExpression)
+        } else {
+            lookupText(sourceUnit, node)
         }
-        return lookupText(sourceUnit, node)
     }
 
-    public static String lookupText(SourceUnit sourceUnit, ASTNode node) {
+    static String lookupText(SourceUnit sourceUnit, ASTNode node) {
         Janitor janitor = new Janitor()
         StringBuilder text = new StringBuilder()
         for (int i = node.lineNumber; i <= node.lastLineNumber; i++) {
             String currentLine = sourceUnit.getSample(i, 0, janitor)
+            String newLine = '\n'
+
             if (i == node.lineNumber && i == node.lastLineNumber) {
                 text.append(currentLine.substring(node.columnNumber - 1, node.lastColumnNumber - 1))
             } else if (i == node.lineNumber) {
                 text.append(currentLine.substring(node.columnNumber - 1))
-                text.append('\n')
+                text.append(newLine)
             } else if (i == node.lastLineNumber) {
                 text.append(currentLine.substring(0, node.lastColumnNumber - 1))
             } else {
                 text.append(currentLine)
-                text.append('\n')
+                text.append(newLine)
             }
         }
-        return text.toString().trim()
+        text.toString().trim()
     }
 
-    public static String getImportAlias(SourceUnit sourceUnit, Class clazz) {
-        def importNode = sourceUnit.AST.imports.find { it.type == ClassHelper.make(clazz) }
-        return importNode ? importNode.alias : null
+    static String getImportAlias(SourceUnit sourceUnit, Class clazz) {
+        ImportNode importNode = sourceUnit.AST.imports.find { it.type == ClassHelper.make(clazz) }
+        importNode ? importNode.alias : null
     }
 }

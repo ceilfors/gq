@@ -26,9 +26,9 @@ import com.ceilfors.groovy.gq.codeflow.MethodInfo
  */
 class IndentingCodeFlowPrinter implements CodeFlowPrinter {
 
-    String indent = "  "
+    String indent = '  '
     int indentLevel = 0
-    private CodeFlowPrinter out
+    private final CodeFlowPrinter out
 
     IndentingCodeFlowPrinter(CodeFlowPrinter out) {
         this.out = out
@@ -36,7 +36,7 @@ class IndentingCodeFlowPrinter implements CodeFlowPrinter {
 
     @Override
     void printMethodStart(MethodInfo methodInfo) {
-        indent()
+        printIndent()
         out.printMethodStart(methodInfo)
         indentLevel++
     }
@@ -49,13 +49,13 @@ class IndentingCodeFlowPrinter implements CodeFlowPrinter {
     @Override
     void printMethodEnd(Object result) {
         indentLevel--
-        indent()
+        printIndent()
         out.printMethodEnd(result)
     }
 
     @Override
     void printExpression(ExpressionInfo expressionInfo) {
-        indent()
+        printIndent()
         out.printExpression(expressionInfo)
     }
 
@@ -67,11 +67,11 @@ class IndentingCodeFlowPrinter implements CodeFlowPrinter {
     @Override
     void printException(ExceptionInfo exceptionInfo) {
         indentLevel--
-        indent()
+        printIndent()
         out.printException(exceptionInfo)
     }
 
-    void indent() {
+    void printIndent() {
         out.print(indent * indentLevel)
     }
 }
