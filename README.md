@@ -28,7 +28,6 @@ def welcome(arg) {
 q | welcome(q / who())
 ```
 
-`tail -f /tmp/gq`
-```
+Output
+![gq output](docs/quick-start-output-75.png?raw=true "gq output")
 
-```
