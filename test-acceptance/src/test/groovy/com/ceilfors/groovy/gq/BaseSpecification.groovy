@@ -85,6 +85,8 @@ class BaseSpecification extends Specification {
     static insertPackageAndImport(String text) {
         return """package com.ceilfors.groovy.test
                  |
+                 |import gq.Gq as q
+                 |
                  |$text""".stripMargin()
     }
 }

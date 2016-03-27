@@ -16,9 +16,9 @@
 
 package com.ceilfors.groovy.gq.ast
 
-import com.ceilfors.groovy.gq.Gq
 import com.ceilfors.groovy.gq.SingletonCodeFlowManager
 import com.ceilfors.groovy.gq.codeflow.ExpressionInfo
+import gq.Gq
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassCodeExpressionTransformer
 import org.codehaus.groovy.ast.ClassHelper
@@ -45,7 +45,6 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.classX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.constX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.ctorX
 import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
-
 /**
  * @author ceilfors
  */
@@ -84,8 +83,14 @@ class GqASTTransformation implements ASTTransformation {
         @SuppressWarnings('Instanceof')
         @Override
         Expression transform(Expression expression) {
-            if (expression instanceof MethodCallExpression
-                    && expression.methodAsString == getImportAlias(sourceUnit, Gq)) {
+            String alias = getImportAlias(sourceUnit, Gq)
+            if (!alias) {
+                // Ignoring the class as it doesn't try to use Gq.
+                // Note that import without alias in Groovy gives back alias too
+                return super.transform(expression)
+            }
+
+            if (expression instanceof MethodCallExpression && expression.methodAsString == alias) {
                 return transformCall(expression as MethodCallExpression)
             }
 

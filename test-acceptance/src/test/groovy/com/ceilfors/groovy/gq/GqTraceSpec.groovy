@@ -131,7 +131,7 @@ class GqTraceSpec extends BaseSpecification {
         e.message == "Hello!"
         fileContentEquals gqFile,
                 """throwException()
-                  |!> RuntimeException('Hello!') at GqExample.groovy:26
+                  |!> RuntimeException('Hello!') at GqExample.groovy:28
                   |""".stripMargin()
     }
 
@@ -149,9 +149,9 @@ class GqTraceSpec extends BaseSpecification {
                 """nestedThrowException1()
                   |  nestedThrowException2()
                   |    nestedThrowException3()
-                  |    !> RuntimeException('Hello!') at GqExample.groovy:43
-                  |  !> RuntimeException('Hello!') at GqExample.groovy:37
-                  |!> RuntimeException('Hello!') at GqExample.groovy:31
+                  |    !> RuntimeException('Hello!') at GqExample.groovy:45
+                  |  !> RuntimeException('Hello!') at GqExample.groovy:39
+                  |!> RuntimeException('Hello!') at GqExample.groovy:33
                   |""".stripMargin()
     }
 
@@ -173,7 +173,7 @@ class GqTraceSpec extends BaseSpecification {
         thrown(RuntimeException)
         fileContentEquals gqFile,
                 """throwException()
-                  |!> RuntimeException('Hello!') at GqExample.groovy:26
+                  |!> RuntimeException('Hello!') at GqExample.groovy:28
                   |""".stripMargin()
     }
 

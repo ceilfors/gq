@@ -184,8 +184,8 @@ ruleset {
     ConsecutiveBlankLines
 //    FileEndsWithoutNewline - Not important, handled by IDE
     LineLength
-    MissingBlankLineAfterImports
-    MissingBlankLineAfterPackage
+//    MissingBlankLineAfterImports - Not important, handled by IDE
+//    MissingBlankLineAfterPackage - Not important, handled by IDE
     SpaceAfterCatch
     SpaceAfterClosingBrace
     SpaceAfterComma

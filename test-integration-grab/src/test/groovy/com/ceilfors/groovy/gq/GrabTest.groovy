@@ -51,6 +51,8 @@ class GrabTest {
 
         def test = new GroovyClassLoader().parseClass("""
 
+            import gq.Gq as q
+
             @Grab(group='${artifactGroup}', module='${artifactModule}', version='${artifactVersion}')
             class GrabTest {
 

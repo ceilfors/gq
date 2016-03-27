@@ -16,6 +16,8 @@
 
 package com.ceilfors.groovy.gq
 
+import gq.Gq
+
 /**
  * @author ceilfors
  */

@@ -15,4 +15,3 @@
 #
 
 com.ceilfors.groovy.gq.ast.GqASTTransformation
-com.ceilfors.groovy.gq.ast.AutoImportASTTransformation

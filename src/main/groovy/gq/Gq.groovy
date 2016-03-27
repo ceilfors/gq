@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.ceilfors.groovy.gq
+package gq
 
-import com.github.yihtserns.groovy.decorator.Function
 import com.github.yihtserns.groovy.decorator.MethodDecorator
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 
@@ -25,13 +24,13 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 
+import static com.ceilfors.groovy.gq.GqTraceDecorator.trace
+
 /**
  * @author ceilfors
  */
-@MethodDecorator({ Function func ->
-    return { args ->
-        GqTraceDecorator.trace(func, args)
-    }
+@MethodDecorator({ func ->
+    return { args -> trace(func, args) }
 })
 @GroovyASTTransformationClass('com.github.yihtserns.groovy.decorator.DecoratorASTTransformation')
 @Retention(RetentionPolicy.SOURCE)

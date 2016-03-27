@@ -181,15 +181,35 @@ class GqSpec extends BaseSpecification {
                   |""".stripMargin()
     }
 
-    def "Should be able to override import alias if necessary"() {
+    def "Should be able to use any import alias"() {
         setup:
         def instance = toInstance("""
-            import com.ceilfors.groovy.gq.Gq as gq
+            import gq.Gq as gq
 
             def q() {
                 return "my own method"
             }
             gq(q())
+        """)
+
+        when:
+        instance.main()
+
+        then:
+        fileContentEquals gqFile,
+                """run: q()='my own method'
+                  |""".stripMargin()
+    }
+
+    def "Should be able to use without alias"() {
+        setup:
+        def instance = toInstance("""
+            import gq.Gq
+
+            def q() {
+                return "my own method"
+            }
+            Gq(q())
         """)
 
         when:
