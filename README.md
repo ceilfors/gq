@@ -1,6 +1,7 @@
 # gq
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/ceilfors/gq/blob/master/LICENSE)
+[![Download](https://api.bintray.com/packages/ceilfors/maven/gq/images/download.svg) ](https://bintray.com/ceilfors/maven/gq/_latestVersion)
 [![Linux Build Status](https://img.shields.io/circleci/project/ceilfors/gq/master.svg?label=Linux Build)](https://circleci.com/gh/ceilfors/gq/tree/master)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/ceilfors/gq/master.svg?label=Windows Build)](https://ci.appveyor.com/project/ceilfors/gq/branch/master)
 [![Groovy 2.4.5](https://img.shields.io/badge/groovy-2.4.5-red.svg)](http://www.groovy-lang.org/)
