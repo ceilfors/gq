@@ -10,7 +10,7 @@ Quick and dirty debugging output for Groovy.
 
 # Quick Start
 
-*Source code*
+_**Source code**_
 
 ```
 @Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0') // 1. Get dependency!
@@ -31,7 +31,7 @@ def greeter(args) { args << '!'; args.join(' ') }
 println(greeter([greet(), me()]))
 ```
 
-*Output*
+_**Output**_
 
 `tail -f /tmp/gq`
 
