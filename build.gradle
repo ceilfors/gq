@@ -32,6 +32,12 @@ allprojects {
         testCompile 'junit:junit:4.12'
     }
 
+    scmVersion {
+        tag {
+            prefix = ''
+        }
+    }
+
     project.version = scmVersion.version
 
     processResources {
