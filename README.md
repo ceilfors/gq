@@ -61,7 +61,7 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
 - gq.color
 
   *Default: true*
-  Set true to print ANSI color to make /tmp/gq console friendly. If you prefer to view `gq file` from text editor, you can of course install a plugin for your favourite text editor to render ASCI escape codes.
+  Set true to print ANSI color to make /tmp/gq console friendly. If you prefer to view `gq file` from text editor, you can of course install a plugin for your favourite text editor to render ANSI escape codes.
 
 # Features
 
@@ -94,6 +94,12 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
   ...
   0.1s -> 'HELLO world!!!'
   ```
+
+# Release steps
+
+1. Create a new tag for the next release: `git tag <version`
+2. Check if gradle is axion-plugin is successfully picking up the intended version `./gradlew currentVersion`
+3. Upload to jcenter: `./gradlew bintrayUpload -PbintrayUser=<> -PbintrayApiKey=<>`
 
 # Credits
 
