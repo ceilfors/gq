@@ -31,6 +31,8 @@ def greeter(args) { args << '!'; args.join(' ') }
 println(greeter([greet(), me()]))
 ```
 
+Run the program and you'll discover the output below. Remember to remove all these debugging notations before you publish your software to production.
+
 _**Output**_
 
 `tail -f /tmp/gq`
@@ -53,13 +55,12 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
 
   *Default: /tmp*
   
-  Configures where gq should be putting gq files. This will go to `C:/tmp` in Windows.
+  Configures where gq should be putting gq files. By default `gq file` will go to `/tmp/gq`. This will go to `C:/tmp` in Windows. You can't change the file name generated.
 
 - gq.color
 
   *Default: true*
-
-  Set true to print ANSI color to make /tmp/gq console friendly. You can install a plugin for your favourite text editor to render ASCI escape codes of course if you want to leave this value to true.
+  Set true to print ANSI color to make /tmp/gq console friendly. If you prefer to view `gq file` from text editor, you can of course install a plugin for your favourite text editor to render ASCI escape codes.
 
 # Features
 
@@ -67,7 +68,7 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
 
 - [x] Use any import alias you want
 
-  If you can't use `import gq.Gq as q` as you have q variable or method already declared in your project, you can change it to whatever alias you want. Gq will also work without alias e.g. `import gq.Gq`. When using without alias too, just replace everything to Gq: @Gq, Gq|, Gq/, Gq().
+  If you can't use `import gq.Gq as q` as you have declared q variable or method already in your project, you can change it to whatever alias you want. Gq will also work without alias e.g. `import gq.Gq`. When using without alias, just replace everything to Gq: @Gq, Gq|, Gq/, Gq().
 
 - [x] Store long values to a file
 
@@ -77,11 +78,11 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
   0.2s run: new File('long-xml').text='<xml><root><chi..ren></root></xml>' (file:///tmp/gq0615b779-20dc-4a7e-bcca-8e2b63c7c8a8.txt)
   ```
   
-  Notice the printed value above that the long xml has been shortened with **..** in the middle. You will also see the link to the file where the actual value will be stored i.e. **file:///tmp/gq0615b779-20dc-4a7e-bcca-8e2b63c7c8a8.txt**.
+  Notice the printed value above that the xml file content has been shortened with **..** in the middle. You will also see the link to the file where the actual value will be stored i.e. **file:///tmp/gq0615b779-20dc-4a7e-bcca-8e2b63c7c8a8.txt**. A new randomly generated file will be created every time there is a long value found.
 
 - [x] @CompileStatic
 
-  You will be able to use gq in conjunction with @CompileStatic
+  You will be able to use gq in conjunction with @CompileStatic.
   
 - [x] /tmp/gq formatting
 
