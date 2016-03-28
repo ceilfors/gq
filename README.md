@@ -10,24 +10,89 @@ Quick and dirty debugging output for Groovy.
 
 # Quick Start
 
-Source code
+_**Source code**_
+
+```
+@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0') // 1. Get dependency!
+import gq.Gq as q // 2. Import q and get ready
+```
 ```groovy
-@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0') // 1. Get the dependency!
-import gq.Gq as q // 2. Import the class
+def me() { 'world' }
+def greet() { 'hello' }
 
-def who() { "world" }
-def greet() { "hello" }
+// 3. Use q(), q|, q/  to print values without temporary variable. Check the differences from the output below.
+println([greet(), q(me() + ' !')].join(' '))
+println([greet(), q/me() + ' !'].join(' '))
+println(q|[greet(), me() + ' !'].join(' '))
 
-@q // 3. Annotate a method to get trace of method calls
-def welcome(arg) {
-    return "${q(greet())} $arg !!" // 4. Use q() to capture the expression in the parentheses
-}
+@q // 4. Annotate a method to get trace of method calls
+def greeter(args) { args << '!'; args.join(' ') }
 
-// 5. Use q | to capture all expressions on the right of the operator
-// 6. Use q / to capture a single expression
-q | welcome(q / who())
+println(greeter([greet(), me()]))
 ```
 
-Output
-![gq output](docs/quick-start-output-75.png?raw=true "gq output")
+_**Output**_
 
+`tail -f /tmp/gq`
+
+```groovy
+run: me() + ' !'='world !'
+run: me()='world'
+run: [greet(), me() + ' !'].join(' ')='hello world !'
+greeter(['hello', 'world'])
+-> 'hello world !'
+```
+
+The colored output can be seen [here](doc/quick-start-output.png)!
+
+# Configuration
+
+These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/elsewhere test.groovy`
+
+- gq.tmp
+
+  *Default: /tmp*
+  
+  Configures where gq should be putting gq files. This will go to `C:/tmp` in Windows.
+
+- gq.color
+
+  *Default: true*
+
+  Set true to print ANSI color to make /tmp/gq console friendly. You can install a plugin for your favourite text editor to render ASCI escape codes of course if you want to leave this value to true.
+
+# Features
+
+*More detailed behaviors can be found at [gq acceptance tests](test-acceptance/src/test/groovy/com/ceilfors/groovy/gq)*
+
+- [x] Use any import alias you want
+
+  If you can't use `import gq.Gq as q` as you have q variable or method already declared in your project, you can change it to whatever alias you want. Gq will also work without alias e.g. `import gq.Gq`. When using without alias too, just replace everything to Gq: @Gq, Gq|, Gq/, Gq().
+
+- [x] Store long values to a file
+
+  When you do `q(new File('long-xml').text)`, when you do `tail /tmp/gq` you will find:
+    
+  ```
+  0.2s run: new File('long-xml').text='<xml><root><chi..ren></root></xml>' (file:///tmp/gq0615b779-20dc-4a7e-bcca-8e2b63c7c8a8.txt)
+  ```
+  
+  Notice the printed value above that the long xml has been shortened with **..** in the middle. You will also see the link to the file where the actual value will be stored i.e. **file:///tmp/gq0615b779-20dc-4a7e-bcca-8e2b63c7c8a8.txt**.
+
+- [x] @CompileStatic
+
+  You will be able to use gq in conjunction with @CompileStatic
+  
+- [x] /tmp/gq formatting
+
+  ```groovy
+  0.0s hello() // timestamp as a prefix on every line. This helps differentiating multiple time of execution.
+  0.1s   oops() // Indentation when you have nested @q call
+  0.1s   !> RuntimeException('Hello') at visualizeColor.groovy:43 // Handles and prints exception with line number
+  ...
+  0.1s -> 'HELLO world!!!'
+  ```
+
+# Credits
+
+Heavily inspired by https://github.com/zestyping/q
