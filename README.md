@@ -71,7 +71,7 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
 
 - [x] Store long values to a file
 
-  When you do `q(new File('long-xml').text)`, when you do `tail /tmp/gq` you will find:
+  When you do `q(new File('long-xml').text)`, then `tail /tmp/gq`, you will find:
     
   ```
   0.2s run: new File('long-xml').text='<xml><root><chi..ren></root></xml>' (file:///tmp/gq0615b779-20dc-4a7e-bcca-8e2b63c7c8a8.txt)
