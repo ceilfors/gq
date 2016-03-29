@@ -97,8 +97,8 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
 
 # Release steps
 
-1. Create a new tag for the next release: `git tag <version`
-2. Check if gradle is axion-plugin is successfully picking up the intended version `./gradlew currentVersion`
+1. Create a new tag for the next release: `git tag <version>`
+2. Check if axion-plugin is successfully picking up the intended version `./gradlew currentVersion`
 3. Upload to jcenter: `./gradlew bintrayUpload -PbintrayUser=<> -PbintrayApiKey=<>`
 
 # Credits
