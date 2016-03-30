@@ -17,11 +17,17 @@
 package com.ceilfors.groovy.gq
 
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 /**
+ * This test is required as it is possible for @Grab to fail when there's a wrong dependency being pulled.
+ * One of the previous error is caused by org.codehaus.groovy:groovy-all:2.4.5 where the following exception will
+ * be thrown<br />
+ * <pre>Caused by: java.lang.ClassNotFoundException: # Licensed to the Apache Software Foundation (ASF) under one or more</pre>
+ *
  * @author ceilfors
  */
 class GrabTest {
@@ -29,7 +35,18 @@ class GrabTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
+    static String artifactVersion
+    static String artifactGroup
+    static String artifactModule
+
     File gqFile
+
+    @BeforeClass
+    public static void setupClass() {
+        artifactVersion = System.getProperty('gqVersion')
+        artifactGroup = System.getProperty('gqGroup')
+        artifactModule = System.getProperty('gqName')
+    }
 
     @Before
     public void setup() {
@@ -45,10 +62,6 @@ class GrabTest {
 
     @Test
     public void "Should be able to use gq with Grab"() {
-        String artifactVersion = System.getProperty('gqVersion')
-        String artifactGroup = System.getProperty('gqGroup')
-        String artifactModule = System.getProperty('gqName')
-
         def test = new GroovyClassLoader().parseClass("""
 
             import gq.Gq as q
