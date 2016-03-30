@@ -20,4 +20,4 @@ test {
     systemProperty 'gqName', rootProject.name
 }
 
-test.dependsOn rootProject.install
+test.dependsOn rootProject.publishToMavenLocal
