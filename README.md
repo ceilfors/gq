@@ -14,7 +14,7 @@ Quick and dirty debugging output for Groovy.
 _**Source code**_
 
 ```
-@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.0') // 1. Get dependency!
+@Grab(group='com.ceilfors.groovy', module='gq', version='0.1.1') // 1. Get dependency!
 import gq.Gq as q // 2. Import q and get ready
 ```
 ```groovy
@@ -100,6 +100,7 @@ These configurations are set via Java System Properties e.g. `groovy -Dgq.tmp=/e
 1. Create a new tag for the next release: `git tag <version>`
 2. Check if axion-plugin is successfully picking up the intended version `./gradlew currentVersion`
 3. Upload to jcenter: `./gradlew bintrayUpload -PbintrayUser=<> -PbintrayApiKey=<>`
+4. Push tags to github: `git push --tags`
 
 # Credits
 
