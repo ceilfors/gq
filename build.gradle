@@ -151,5 +151,8 @@ bintray {
                 sign = true
             }
         }
+        gpg {
+            sign = true
+        }
     }
 }
