@@ -149,6 +149,7 @@ bintray {
             name = project.version
             gpg {
                 sign = true
+                passphrase = project.hasProperty('gpgPassphrase') ? project.property('gpgPassphrase') : System.getenv('GPG_PASSPHRASE')
             }
         }
     }
