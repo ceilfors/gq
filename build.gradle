@@ -147,6 +147,9 @@ bintray {
         vcsUrl = 'https://github.com/ceilfors/gq.git'
         version {
             name = project.version
+            gpg {
+                sign = true
+            }
         }
     }
 }
