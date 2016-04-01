@@ -83,20 +83,55 @@ test {
     systemProperty 'line.separator', '\n'
 }
 
-task sourceJar(type: Jar, dependsOn: classes) {
+task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 publishing {
     publications {
-        DefaultPublication(MavenPublication) {
+        mavenCentral(MavenPublication) {
             from components.java
             groupId 'com.ceilfors.groovy'
             artifactId 'gq'
             version project.version
             artifact shadowJar
-            artifact sourceJar
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                asNode().children().last() + {
+                    // From http://mike-neck.github.io/blog/2013/06/21/how-to-publish-artifacts-with-gradle-maven-publish-plugin-version-1-dot-6/
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name 'gq'
+                    description 'Quick and dirty debugging output for Groovy tired programmers.'
+                    url 'https://github.com/ceilfors/gq'
+                    scm {
+                        url 'git@github.com:ceilfors/gq.git'
+                        connection 'scm:git:git@github.com:ceilfors/gq.git'
+                        developerConnection 'scm:git:git@github.com:ceilfors/gq.git'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'ceilfors'
+                            name 'Wisen Tanasa'
+                            email 'wisen@ceilfors.com'
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -104,7 +139,7 @@ publishing {
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['DefaultPublication']
+    publications = ['mavenCentral']
     pkg {
         repo = 'maven'
         name = 'gq'
