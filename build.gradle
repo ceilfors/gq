@@ -62,6 +62,7 @@ subprojects {
 
 apply plugin: 'maven-publish'
 apply plugin: 'codenarc'
+apply plugin: 'idea'
 
 codenarc {
     configFile = file('config/codenarc/rules.groovy')
@@ -158,5 +159,12 @@ bintray {
                 password = project.hasProperty('mavenCentralPassword') ? project.property('mavenCentralPassword') : System.getenv('MAVEN_CENTRAL_PASSWORD')
             }
         }
+    }
+}
+
+idea{
+    module {
+        downloadJavadoc = true
+        downloadSources = true
     }
 }
