@@ -42,9 +42,11 @@ class GqSpec extends BaseSpecification {
         fileContentEquals gqFile, "test: $result\n"
 
         where:
-        input      || result
-        "q(3 + 5)" || "3 + 5=8"
-        "2+q(2)"   || "2=2"
+        input                      || result
+        "q(3 + 5)"                 || "3 + 5=8"
+        "2+q(2)"                   || "2=2"
+        "{ -> q(3 + 5) }()"        || "3 + 5=8"
+        "{ val -> q(val + 5) }(3)" || "val + 5=8"
     }
 
     @Unroll
@@ -56,11 +58,13 @@ class GqSpec extends BaseSpecification {
         fileContentEquals gqFile, "test: $result\n"
 
         where:
-        input                || result
-        "q | 3 + 5 "         || "3 + 5=8"
-        "q|2+2"              || "2 + 2=4"
-        "3 + (q | 5)"        || "5=5"
-        "true && q | 'test'" || "'test'='test'"
+        input                       || result
+        "q | 3 + 5 "                || "3 + 5=8"
+        "q|2+2"                     || "2 + 2=4"
+        "3 + (q | 5)"               || "5=5"
+        "true && q | 'test'"        || "'test'='test'"
+        "{ -> q | 3 + 5 }()"        || "3 + 5=8"
+        "{ val -> q | val + 5 }(3)" || "val + 5=8"
     }
 
     @Unroll
@@ -72,10 +76,12 @@ class GqSpec extends BaseSpecification {
         fileContentEquals gqFile, "test: $result\n"
 
         where:
-        input                  || result
-        "q / 3 + 5 "           || "3=3"
-        "1 + q / 1"            || "1=1"
-        "'test' && q / 'test'" || "'test'='test'"
+        input                       || result
+        "q / 3 + 5 "                || "3=3"
+        "1 + q / 1"                 || "1=1"
+        "'test' && q / 'test'"      || "'test'='test'"
+        "{ -> q / 3 + 5 }()"        || "3=3"
+        "{ val -> q / val + 5 }(3)" || "val=3"
     }
 
     def "Should convert multi line variable expression to one line"() {
