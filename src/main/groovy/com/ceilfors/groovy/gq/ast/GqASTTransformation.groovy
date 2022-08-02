@@ -27,6 +27,7 @@ import org.codehaus.groovy.ast.CodeVisitorSupport
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
+import org.codehaus.groovy.ast.expr.ClosureExpression
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
@@ -103,6 +104,15 @@ class GqASTTransformation implements ASTTransformation {
                     && expression.operation.type in [Types.PIPE, Types.DIVIDE]) {
                 return transformOperator(expression)
             }
+
+            if (expression instanceof ClosureExpression) {
+                // Workaround for GROOVY-10713: ClassCodeExpressionTransformer ignoring Expressions within
+                // ClosureExpression.code
+                expression.visit(this)
+
+                return expression
+            }
+
             super.transform(expression)
         }
 
